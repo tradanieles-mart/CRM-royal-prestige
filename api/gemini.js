@@ -34,7 +34,10 @@ module.exports = async (req, res) => {
     const model = 'gemini-3.6-flash';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-    const generationConfig = { maxOutputTokens: maxTokens || 800 };
+    const generationConfig = {
+      maxOutputTokens: maxTokens || 800,
+      thinkingConfig: { thinkingBudget: 0 }
+    };
     if (json) { generationConfig.responseMimeType = 'application/json'; }
 
     const geminiRes = await fetch(url, {
