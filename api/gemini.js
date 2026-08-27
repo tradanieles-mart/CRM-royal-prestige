@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { prompt, image, maxTokens } = req.body || {};
+    const { prompt, image, maxTokens, json } = req.body || {};
     if (!prompt) {
       res.status(400).json({ error: 'Falta el texto (prompt).' });
       return;
@@ -34,12 +34,15 @@ module.exports = async (req, res) => {
     const model = 'gemini-3.6-flash';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
+    const generationConfig = { maxOutputTokens: maxTokens || 800 };
+    if (json) { generationConfig.responseMimeType = 'application/json'; }
+
     const geminiRes = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ role: 'user', parts }],
-        generationConfig: { maxOutputTokens: maxTokens || 800 }
+        generationConfig
       })
     });
 
