@@ -1073,7 +1073,28 @@ function renderCard(p, colKey){
     actions.appendChild(makeBtn('💬 Cliente existente','btn-ghost',()=>openWaModal(p.id,'cliente'),'Preguntar por sus sartenes, mantenimiento y garantías'));
   }
   actions.appendChild(makeBtn('Editar / notas','btn-ghost',()=>openEditProspect(p.id)));
+  actions.appendChild(makeBtn('Eliminar','btn-rose',()=>confirmDeleteProspect(p.id)));
   return card;
+}
+
+function confirmDeleteProspect(id){
+  const p = getProspect(id);
+  if(!p) return;
+  showModal(`
+    <h3>¿Eliminar a ${escapeHtml(p.name)}?</h3>
+    <div class="sub">Se va a borrar por completo, junto con todo su historial y notas. Esta acción no se puede deshacer.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-rose" onclick="deleteProspect('${id}')">Sí, eliminar</button>
+    </div>
+  `);
+}
+function deleteProspect(id){
+  DATA.prospects = DATA.prospects.filter(p=>p.id!==id);
+  closeModal();
+  saveData();
+  renderAll();
+  toast('Prospecto eliminado');
 }
 
 function makeBtn(text, cls, fn, title){
