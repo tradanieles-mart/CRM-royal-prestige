@@ -34,10 +34,7 @@ module.exports = async (req, res) => {
     const model = 'gemini-3.6-flash';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-    const generationConfig = {
-      maxOutputTokens: maxTokens || 800,
-      thinkingConfig: { thinkingBudget: 0 }
-    };
+    const generationConfig = { maxOutputTokens: maxTokens || 800 };
     if (json) { generationConfig.responseMimeType = 'application/json'; }
 
     const geminiRes = await fetch(url, {
@@ -60,11 +57,3 @@ module.exports = async (req, res) => {
     const candidate = data.candidates && data.candidates[0];
     const text = (candidate && candidate.content && candidate.content.parts || [])
       .map(p => p.text || '')
-      .join('');
-
-    res.status(200).json({ text });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'Error interno al conectar con la IA.' });
-  }
-};
