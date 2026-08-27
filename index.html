@@ -1084,6 +1084,31 @@ function makeBtn(text, cls, fn, title){
   if(title) b.title=title;
   return b;
 }
+/* ============================================================
+   IA (Google Gemini, vía la función segura /api/gemini de Vercel)
+   ============================================================ */
+async function callAI(prompt, opts){
+  opts = opts || {};
+  try{
+    const body = { prompt, maxTokens: opts.maxTokens || 800 };
+    if(opts.image){ body.image = opts.image; }
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    const json = await response.json();
+    if(!response.ok){
+      console.error('Error de IA:', json.error || json);
+      return null;
+    }
+    return (json.text || '').trim();
+  }catch(e){
+    console.error('Error llamando a /api/gemini', e);
+    return null;
+  }
+}
+
 function escapeHtml(s){
   const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML;
 }
@@ -1413,18 +1438,8 @@ Genera solo el mensaje final, sin explicaciones ni comillas.`;
   }
 
   try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 400,
-        messages: [{role:"user", content: prompt}]
-      })
-    });
-    const json = await response.json();
-    const textBlock = (json.content||[]).find(b=>b.type==='text');
-    const message = textBlock ? textBlock.text.trim().replace(/^"|"$/g,'') : '';
+    const text = await callAI(prompt, {maxTokens: 400});
+    const message = text ? text.replace(/^"|"$/g,'') : '';
     const ta = document.getElementById('waText');
     const status = document.getElementById('waStatus');
     if(!ta) return; // el modal ya se cerró
@@ -1793,22 +1808,9 @@ async function extractIndeedText(){
   const btn = document.getElementById('indeedExtractBtn');
   btn.disabled = true; btn.textContent = 'Leyendo…';
   try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 400,
-        messages: [{
-          role: "user",
-          content: `Este es un texto copiado de un perfil o mensaje de un candidato en Indeed, para reclutamiento de un equipo de venta directa de Royal Prestige:\n\n"""${raw}"""\n\nExtrae: nombre completo, teléfono (si aparece), y un resumen breve como nota (experiencia relevante o por qué podría interesar). Responde ÚNICAMENTE con JSON válido, sin texto extra ni markdown, en este formato exacto: {"nombre":"","telefono":"","notas":""}. Si un dato no aparece, deja el valor como cadena vacía "".`
-        }]
-      })
-    });
-    const json = await response.json();
-    const textBlock = (json.content||[]).find(b=>b.type==='text');
-    if(!textBlock){ toast('No se pudo leer el texto, intenta de nuevo'); btn.disabled=false; btn.textContent='Extraer datos'; return; }
-    const cleaned = textBlock.text.replace(/```json|```/g,'').trim();
+    const text = await callAI(`Este es un texto copiado de un perfil o mensaje de un candidato en Indeed, para reclutamiento de un equipo de venta directa de Royal Prestige:\n\n"""${raw}"""\n\nExtrae: nombre completo, teléfono (si aparece), y un resumen breve como nota (experiencia relevante o por qué podría interesar). Responde ÚNICAMENTE con JSON válido, sin texto extra ni markdown, en este formato exacto: {"nombre":"","telefono":"","notas":""}. Si un dato no aparece, deja el valor como cadena vacía "".`, {maxTokens: 400});
+    if(!text){ toast('No se pudo leer el texto, intenta de nuevo'); btn.disabled=false; btn.textContent='Extraer datos'; return; }
+    const cleaned = text.replace(/```json|```/g,'').trim();
     const extracted = JSON.parse(cleaned);
     openAddRecruit({
       name: extracted.nombre || '',
@@ -2328,17 +2330,7 @@ RECOMENDACIONES — 3 a 4 acciones concretas y directas para la próxima semana,
 Sé concreto, usa los números reales que te di, y no inventes datos que no están en el JSON.`;
 
   try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        messages: [{role:"user", content: prompt}]
-      })
-    });
-    const json = await response.json();
-    const text = (json.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    const text = await callAI(prompt, {maxTokens: 1000});
     box.classList.remove('loading');
     box.textContent = text || 'No se pudo generar el análisis, intenta de nuevo.';
     if(text){
@@ -2367,25 +2359,12 @@ function handleSurveyPhoto(event){
     const mediaType = file.type || 'image/jpeg';
     toast('Leyendo la foto de la encuesta…');
     try{
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 500,
-          messages: [{
-            role: "user",
-            content: [
-              { type:"image", source:{ type:"base64", media_type: mediaType, data: base64 } },
-              { type:"text", text: "Esta es una foto de una encuesta/formulario de prospección en papel, llenado a mano en un módulo de venta directa de Royal Prestige (cocinas y utensilios de cocina). Extrae: nombre completo del prospecto, teléfono/celular, dirección (calle y número si aparece), colonia/zona, dónde lo conoció (ej. nombre de la tienda o módulo), si le gusta cocinar (si/no, según lo marcado), si le interesa cuidar su salud (si/no), antecedentes familiares de enfermedad marcados (cáncer, diabetes, hipertensión — puede haber varios o ninguno), para cuántas personas cocina, con qué utensilios cocina actualmente, y cualquier nota relevante adicional (comentarios, si un familiar ya tiene el producto, etc.). Responde ÚNICAMENTE con un JSON válido, sin texto extra, sin markdown, en este formato exacto: {\"nombre\":\"\",\"telefono\":\"\",\"direccion\":\"\",\"colonia\":\"\",\"donde_conocio\":\"\",\"le_gusta_cocinar\":\"\",\"le_interesa_salud\":\"\",\"antecedentes\":[],\"num_personas\":\"\",\"utensilios\":\"\",\"notas\":\"\"}. Para le_gusta_cocinar y le_interesa_salud usa exactamente \"si\", \"no\" o \"\" (si no está marcado/no aparece). Para antecedentes usa un arreglo con los valores exactos \"cancer\", \"diabetes\", \"hipertension\" según lo que esté marcado (arreglo vacío si no hay nada marcado). Si algún otro dato no aparece legible en la imagen, deja el valor como cadena vacía \"\"." }
-            ]
-          }]
-        })
-      });
-      const json = await response.json();
-      const textBlock = (json.content||[]).find(b=>b.type==='text');
-      if(!textBlock){ toast('No se pudo leer la foto, intenta de nuevo'); return; }
-      const cleaned = textBlock.text.replace(/```json|```/g,'').trim();
+      const text = await callAI(
+        "Esta es una foto de una encuesta/formulario de prospección en papel, llenado a mano en un módulo de venta directa de Royal Prestige (cocinas y utensilios de cocina). Extrae: nombre completo del prospecto, teléfono/celular, dirección (calle y número si aparece), colonia/zona, dónde lo conoció (ej. nombre de la tienda o módulo), si le gusta cocinar (si/no, según lo marcado), si le interesa cuidar su salud (si/no), antecedentes familiares de enfermedad marcados (cáncer, diabetes, hipertensión — puede haber varios o ninguno), para cuántas personas cocina, con qué utensilios cocina actualmente, y cualquier nota relevante adicional (comentarios, si un familiar ya tiene el producto, etc.). Responde ÚNICAMENTE con un JSON válido, sin texto extra, sin markdown, en este formato exacto: {\"nombre\":\"\",\"telefono\":\"\",\"direccion\":\"\",\"colonia\":\"\",\"donde_conocio\":\"\",\"le_gusta_cocinar\":\"\",\"le_interesa_salud\":\"\",\"antecedentes\":[],\"num_personas\":\"\",\"utensilios\":\"\",\"notas\":\"\"}. Para le_gusta_cocinar y le_interesa_salud usa exactamente \"si\", \"no\" o \"\" (si no está marcado/no aparece). Para antecedentes usa un arreglo con los valores exactos \"cancer\", \"diabetes\", \"hipertension\" según lo que esté marcado (arreglo vacío si no hay nada marcado). Si algún otro dato no aparece legible en la imagen, deja el valor como cadena vacía \"\".",
+        {maxTokens: 500, image: {mediaType, base64}}
+      );
+      if(!text){ toast('No se pudo leer la foto, intenta de nuevo'); return; }
+      const cleaned = text.replace(/```json|```/g,'').trim();
       const extracted = JSON.parse(cleaned);
       openAddProspect({
         name: extracted.nombre || '',
