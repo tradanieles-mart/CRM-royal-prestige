@@ -1134,6 +1134,10 @@ async function callAI(prompt, opts){
 function escapeHtml(s){
   const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML;
 }
+function firstName(fullName){
+  if(!fullName) return '';
+  return fullName.trim().split(/\s+/)[0];
+}
 function telLink(phone){
   if(!phone) return '';
   const clean = phone.replace(/[^\d+]/g,'');
@@ -1390,8 +1394,10 @@ Reglas obligatorias:
 - Referirse a "familia", nunca desglosar "esposo e hijos" por separado.
 - Usar lenguaje de equipo: "le vamos a llevar", no "voy a llevar".
 - Nunca mencionar precios ni montos.
+- Dirigirse a la señora SOLO por su primer nombre (nunca su nombre completo ni apellidos).
+- Justo después de decir el nombre de la vendedora, agregar siempre "de Royal Prestige" (ej. "soy ${sellerName} de Royal Prestige").
 - El mensaje siempre debe:
-  1. Empezar saludando por su nombre y presentarse de inmediato con el nombre de la vendedora (ej. "Hola [nombre prospecto], soy [nombre vendedora]"), y decir que le escribe referente al boletito que le regalaron en el módulo (mencionar el lugar/módulo, ej. Bodega Aurrera).
+  1. Empezar saludando por su primer nombre y presentarse de inmediato con el nombre de la vendedora seguido de "de Royal Prestige" (ej. "Hola [primer nombre], soy [nombre vendedora] de Royal Prestige"), y decir que le escribe referente al boletito que le regalaron en el módulo (mencionar el lugar/módulo, ej. Bodega Aurrera).
   2. Decirle que salió ganadora de un regalo y una degustación.
   3. Mencionar que también se le llevará una plática de nutrición.
   4. Conectar con el mejor dato disponible del prospecto (ver prioridad abajo).
@@ -1406,10 +1412,10 @@ Prioridad para elegir el punto de conexión (usa los que apliquen, combina si ha
 6. NO le interesa la salud → enfocar más en el sabor de la comida y seguir cocinando rico, sin forzar el tema salud.
 7. Si no hay ningún dato disponible (encuesta vacía) → apoyarse solo en el regalo y la degustación, sin inventar información.
 
-Nunca inventes datos que no estén en la información proporcionada del prospecto. El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre].
+Nunca inventes datos que no estén en la información proporcionada del prospecto. El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre vendedora], seguido siempre de "de Royal Prestige".
 
 Datos del prospecto:
-- Nombre: ${p.name || 'no especificado'}
+- Primer nombre (usar SOLO este, nunca el nombre completo): ${firstName(p.name) || 'no especificado'}
 - Dónde lo conoció: ${p.meetPlace || 'no especificado'}
 - Le gusta cocinar: ${p.likesCooking || 'no especificado'}
 - Le interesa la salud: ${p.caresHealth || 'no especificado'}
@@ -1429,10 +1435,10 @@ Reglas obligatorias:
 - Cerrar preguntando disponibilidad (entre semana o fin de semana).
 - Nunca mencionar precios.
 
-El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre].
+El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre vendedora], seguido siempre de "de Royal Prestige".
 
 Datos del prospecto:
-- Nombre: ${p.name || 'no especificado'}
+- Primer nombre (usar SOLO este, nunca el nombre completo): ${firstName(p.name) || 'no especificado'}
 
 Genera solo el mensaje final, sin explicaciones ni comillas.`;
   } else {
@@ -1441,7 +1447,8 @@ Genera solo el mensaje final, sin explicaciones ni comillas.`;
 
 Reglas obligatorias:
 - Máximo 4-5 líneas, tono casual y cercano, tratar de "usted".
-- Empezar saludando por su nombre y presentarse de inmediato con el nombre de la vendedora (ej. "Hola [nombre cliente], soy [nombre vendedora]"), mencionando que le escribe referente a la cortesía que le regalaron en el módulo/tienda donde se conocieron (usar el dato de dónde se conocieron si está disponible).
+- Dirigirse a la señora SOLO por su primer nombre (nunca su nombre completo ni apellidos).
+- Empezar saludando por su primer nombre y presentarse de inmediato con el nombre de la vendedora seguido de "de Royal Prestige" (ej. "Hola [primer nombre], soy [nombre vendedora] de Royal Prestige"), mencionando que le escribe referente a la cortesía que le regalaron en el módulo/tienda donde se conocieron (usar el dato de dónde se conocieron si está disponible).
 - Preguntar cómo le ha funcionado el producto / cómo le ha ido con sus sartenes.
 - Preguntar por el servicio de mantenimiento (si ya lo tuvo, o si le gustaría agendarlo).
 - Mencionar la revisión de garantías, ofreciendo agendarla si gusta.
@@ -1450,10 +1457,10 @@ Reglas obligatorias:
 - Usar lenguaje de equipo: "le vamos a llevar", no "voy a llevar".
 - Nunca inventes datos que no estén en la información proporcionada.
 
-El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre].
+El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre vendedora], seguido siempre de "de Royal Prestige".
 
 Datos del cliente:
-- Nombre: ${p.name || 'no especificado'}
+- Primer nombre (usar SOLO este, nunca el nombre completo): ${firstName(p.name) || 'no especificado'}
 - Dónde se conocieron: ${p.meetPlace || 'no especificado'}
 
 Genera solo el mensaje final, sin explicaciones ni comillas.`;
