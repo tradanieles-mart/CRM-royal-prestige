@@ -1439,7 +1439,7 @@ Genera solo el mensaje final, sin explicaciones ni comillas.`;
   }
 
   try{
-    const text = await callAI(prompt, {maxTokens: 400});
+    const text = await callAI(prompt, {maxTokens: 700});
     const message = text ? text.replace(/^"|"$/g,'') : '';
     const ta = document.getElementById('waText');
     const status = document.getElementById('waStatus');
