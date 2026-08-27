@@ -1,0 +1,2767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7C3E12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Seguimiento · Royal Prestige</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root{
+  --bg:#F7F1E6;
+  --surface:#FFFDF9;
+  --ink:#2B2118;
+  --ink-soft:#6E5F4F;
+  --ink-faint:#A6997F;
+  --accent:#A6551E;
+  --accent-dark:#7C3E12;
+  --accent-soft:#EFD3AD;
+  --sage:#556B4F;
+  --sage-soft:#DEE6D5;
+  --rose:#9C3E33;
+  --rose-soft:#EFD9D2;
+  --line:#E5D8C3;
+  --shadow: 0 1px 2px rgba(43,33,24,0.06), 0 8px 24px -12px rgba(43,33,24,0.18);
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,.display{font-family:'Fraunces',serif;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+button{font-family:inherit;cursor:pointer;}
+::selection{background:var(--accent-soft);}
+
+/* ---------- shell ---------- */
+.app{display:flex;min-height:100vh;}
+.sidebar{width:236px;flex:0 0 236px;background:var(--accent-dark);color:#F3E7D6;padding:28px 18px;display:flex;flex-direction:column;gap:6px;}
+.brand{padding:0 6px 24px 6px;}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(155deg,var(--accent-soft),var(--accent));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:#3B220C;margin-bottom:10px;}
+.brand h1{font-size:19px;margin:0;line-height:1.15;color:#fff;font-weight:600;}
+.brand p{margin:4px 0 0;font-size:12px;color:#D8BFA1;}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:9px;border:none;background:transparent;color:#E9D7BC;font-size:14px;font-weight:500;text-align:left;transition:background .15s;}
+.nav-btn svg{flex:0 0 auto;opacity:.85;}
+.nav-btn:hover{background:rgba(255,255,255,0.07);}
+.nav-btn.active{background:rgba(255,255,255,0.14);color:#fff;}
+.nav-count{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(255,255,255,0.14);padding:2px 7px;border-radius:20px;}
+.sidebar-foot{margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,0.12);font-size:11.5px;color:#CBAE8B;line-height:1.5;}
+.backup-btn{width:100%;text-align:left;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:#F3E7D6;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;margin-top:8px;display:flex;align-items:center;gap:7px;}
+.backup-btn:hover{background:rgba(255,255,255,0.16);}
+.more-btn{display:none;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.14);color:#F3E7D6;border-radius:9px;}
+.more-btn:hover{background:rgba(255,255,255,0.18);}
+.file-input-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+label.btn{cursor:pointer;}
+.mobile-topbar{display:none;}
+.mobile-more-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.16);color:#F3E7D6;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+
+.main{flex:1;min-width:0;padding:34px 40px 60px;}
+.topbar{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;gap:20px;flex-wrap:wrap;}
+.topbar h2{font-size:26px;margin:0 0 4px;font-weight:600;}
+.topbar p{margin:0;color:var(--ink-soft);font-size:14px;}
+.btn{border-radius:9px;padding:10px 16px;font-size:13.5px;font-weight:600;border:1px solid transparent;display:inline-flex;align-items:center;gap:7px;transition:transform .1s, box-shadow .15s;}
+.btn:active{transform:scale(0.97);}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:var(--shadow);}
+.btn-primary:hover{background:var(--accent-dark);}
+.btn-ghost{background:var(--surface);color:var(--ink);border-color:var(--line);}
+.btn-ghost:hover{border-color:var(--accent);}
+.btn-sm{padding:6px 11px;font-size:12.5px;border-radius:7px;}
+.btn-sage{background:var(--sage);color:#fff;}
+.btn-sage:hover{background:#455a40;}
+.btn-rose{background:transparent;color:var(--rose);border-color:var(--rose-soft);}
+.btn-rose:hover{background:var(--rose-soft);}
+
+/* ---------- pipeline ---------- */
+.board{display:grid;grid-template-columns:repeat(6,minmax(220px,1fr));gap:16px;overflow-x:auto;padding-bottom:10px;}
+.col{background:rgba(255,253,249,0.5);border:1px solid var(--line);border-radius:14px;padding:14px;min-height:200px;display:flex;flex-direction:column;gap:10px;}
+.col-head{display:flex;align-items:center;gap:8px;padding:2px 4px 10px;border-bottom:1px dashed var(--line);margin-bottom:2px;}
+.col-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);}
+.col-title{font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--ink);}
+.col-count{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint);}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 13px;box-shadow:var(--shadow);position:relative;}
+.card::before{content:"";position:absolute;top:10px;left:-1px;width:3px;height:calc(100% - 20px);background:var(--accent);border-radius:0 3px 3px 0;opacity:.55;}
+.card[draggable="true"]{cursor:grab;}
+.card.dragging{opacity:.4;}
+.col.drag-over{background:var(--accent-soft);border-color:var(--accent);}
+.card h4{margin:0 0 3px;font-size:14.5px;font-weight:600;}
+.card .meta{font-size:11.5px;color:var(--ink-soft);margin-bottom:9px;}
+.tel-link{color:var(--accent);text-decoration:none;font-weight:600;}
+.tel-link:hover{text-decoration:underline;}
+.card .notes{font-size:12px;color:var(--ink-soft);margin-bottom:9px;line-height:1.4;}
+.card-actions{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:20px;font-weight:600;}
+.tag-rose{background:var(--rose-soft);color:var(--rose);}
+.tag-sage{background:var(--sage-soft);color:var(--sage);}
+.tag-blue{background:#DCE6EE;color:#375873;}
+.tag-neutral{background:var(--line);color:var(--ink-soft);}
+.empty-col{font-size:12px;color:var(--ink-faint);text-align:center;padding:18px 6px;}
+
+/* ---------- clients ---------- */
+.client-list{display:flex;flex-direction:column;gap:10px;}
+.addr-group{margin-bottom:20px;}
+.addr-group-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+.addr-group-title h3{margin:0;font-size:15px;}
+.addr-group-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint);background:var(--bg);border:1px solid var(--line);padding:2px 8px;border-radius:20px;}
+.addr-card{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.addr-card h4{margin:0 0 3px;font-size:14px;}
+.addr-card .addr-line{font-size:12px;color:var(--ink-soft);}
+.addr-card .addr-line svg{vertical-align:-2px;margin-right:3px;opacity:.7;}
+.client-row{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:18px;box-shadow:var(--shadow);}
+.client-row h4{margin:0 0 2px;font-size:15.5px;}
+.client-row .meta{font-size:12px;color:var(--ink-soft);}
+.progress-wrap{flex:1;max-width:260px;}
+.progress-bar{height:7px;border-radius:20px;background:var(--sage-soft);overflow:hidden;}
+.progress-bar > div{height:100%;background:var(--sage);}
+.progress-label{font-size:11px;color:var(--ink-soft);margin-top:5px;font-family:'IBM Plex Mono',monospace;}
+.next-pill{font-size:11.5px;background:var(--accent-soft);color:var(--accent-dark);padding:5px 10px;border-radius:20px;font-weight:600;white-space:nowrap;}
+
+/* ---------- calendar ---------- */
+.cal-wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,0.85fr);gap:22px;align-items:start;}
+.cal-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-head h3{margin:0;font-size:18px;text-transform:capitalize;}
+.cal-nav{display:flex;gap:6px;}
+.cal-nav button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:14px;color:var(--ink-soft);}
+.cal-nav button:hover{border-color:var(--accent);color:var(--accent);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-dow{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);text-align:center;padding-bottom:4px;font-weight:700;}
+.cal-day{aspect-ratio:1;border-radius:9px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12.5px;color:var(--ink-soft);position:relative;background:transparent;}
+.cal-day.in-month{color:var(--ink);}
+.cal-day.today{border-color:var(--accent);font-weight:700;}
+.cal-day.selected{background:var(--accent);color:#fff;}
+.cal-day.has-events:not(.selected)::after{content:"";position:absolute;bottom:5px;width:5px;height:5px;border-radius:50%;background:var(--accent);}
+.cal-day:hover:not(.selected){background:var(--accent-soft);}
+.day-panel h3{margin:0 0 3px;font-size:16px;}
+.day-panel .sub{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
+.agenda-item{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:12px 13px;margin-bottom:10px;position:relative;}
+.agenda-item::before{content:"";position:absolute;top:10px;right:12px;width:16px;height:16px;border-radius:50%;border:2px dashed var(--accent-soft);}
+.agenda-item h5{margin:0 0 3px;font-size:13.5px;padding-right:20px;}
+.agenda-item .who{font-size:11.5px;color:var(--accent-dark);font-weight:600;margin-bottom:5px;}
+.agenda-item p{margin:0 0 10px;font-size:12px;color:var(--ink-soft);line-height:1.45;}
+.agenda-item.done{opacity:.55;}
+.agenda-item.done h5{text-decoration:line-through;}
+.agenda-actions{display:flex;gap:7px;flex-wrap:wrap;}
+.no-events{font-size:13px;color:var(--ink-faint);padding:18px 4px;text-align:center;}
+
+/* ---------- reporte semanal ---------- */
+.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+.metric-card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 16px;box-shadow:var(--shadow);}
+.metric-clickable{cursor:pointer;transition:transform .1s, border-color .15s;}
+.metric-clickable:hover{border-color:var(--accent);}
+.metric-clickable:active{transform:scale(0.97);}
+.metric-card .num{font-family:'Fraunces',serif;font-size:26px;font-weight:600;line-height:1;}
+.metric-card .lbl{font-size:11.5px;color:var(--ink-soft);margin-top:6px;}
+.metric-card .delta{font-size:11px;font-weight:700;margin-top:5px;display:inline-block;padding:2px 7px;border-radius:20px;}
+.delta.up{background:var(--sage-soft);color:var(--sage);}
+.delta.down{background:var(--rose-soft);color:var(--rose);}
+.delta.flat{background:var(--line);color:var(--ink-soft);}
+.bar-row{display:grid;grid-template-columns:120px 1fr 34px;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px;}
+.bar-row .bar-label{color:var(--ink-soft);font-weight:600;}
+.bar-track{height:14px;background:var(--bg);border-radius:20px;overflow:hidden;border:1px solid var(--line);}
+.bar-fill{height:100%;background:var(--accent);border-radius:20px;transition:width .4s;}
+.bar-row .bar-val{font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-align:right;color:var(--ink-soft);}
+.compare-row{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;margin-bottom:12px;}
+.compare-label{font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+.compare-bars{display:flex;flex-direction:column;gap:4px;}
+.compare-bar-line{display:flex;align-items:center;gap:8px;}
+.compare-bar-line .tag-mini{font-size:10px;width:44px;flex:0 0 auto;color:var(--ink-faint);}
+.compare-bar-line .bar-track{flex:1;}
+.compare-bar-line.prev .bar-fill{background:var(--ink-faint);}
+.ai-report{margin-top:16px;font-size:13.5px;line-height:1.7;color:var(--ink);white-space:pre-wrap;}
+.ai-report:empty::before{content:"Da clic en 'Generar análisis' para que el gerente de ventas revise tus números y te dé recomendaciones.";color:var(--ink-faint);font-style:italic;}
+.ai-report.loading::before{content:"Analizando tus números…";color:var(--ink-faint);font-style:italic;}
+
+/* ---------- modal ---------- */
+.overlay{position:fixed;inset:0;background:rgba(43,33,24,0.45);display:flex;align-items:center;justify-content:center;z-index:80;padding:20px;}
+.modal{background:var(--surface);border-radius:16px;padding:26px;width:100%;max-width:440px;box-shadow:0 20px 60px -10px rgba(0,0,0,0.35);max-height:88vh;overflow-y:auto;}
+.modal h3{margin:0 0 4px;font-size:19px;}
+.modal .sub{font-size:12.5px;color:var(--ink-soft);margin-bottom:18px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
+.field input, .field textarea, .field select{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg);font-family:inherit;font-size:13.5px;color:var(--ink);}
+.field textarea{resize:vertical;min-height:56px;}
+.field input:focus, .field textarea:focus, .field select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent);}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
+.notes-log{max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:9px;padding:4px 10px;margin-bottom:12px;background:var(--bg);}
+.notes-log .note-entry{padding:8px 0;border-bottom:1px dashed var(--line);font-size:12.5px;}
+.notes-log .note-entry:last-child{border-bottom:none;}
+.notes-log .note-date{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-bottom:2px;}
+.notes-log-empty{font-size:12px;color:var(--ink-faint);padding:10px 0;text-align:center;}
+.upload-hint{font-size:11.5px;color:var(--ink-soft);margin-top:6px;}
+.gcal-link-list{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;margin-bottom:6px;}
+.gcal-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);text-decoration:none;color:var(--ink);transition:border-color .15s;}
+.gcal-link:hover{border-color:var(--accent);}
+.gcal-link-date{font-size:10.5px;color:var(--ink-faint);flex:0 0 auto;width:52px;}
+.gcal-link-title{font-size:12.5px;flex:1;font-weight:500;}
+.gcal-link-go{font-size:11px;color:var(--accent);font-weight:700;flex:0 0 auto;}
+#printArea{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea, #printArea *{visibility:visible;}
+  #printArea{display:block;position:absolute;top:0;left:0;width:100%;padding:20px;white-space:pre-wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;}
+}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#F7F1E6;padding:10px 18px;border-radius:9px;font-size:13px;opacity:0;pointer-events:none;transition:all .25s;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,0.25);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:200;}
+.login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:150;padding:20px;}
+.login-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:32px 28px;width:100%;max-width:340px;box-shadow:var(--shadow);text-align:center;}
+.login-card h1{font-size:22px;margin:0 0 4px;}
+.login-sub{font-size:13px;color:var(--ink-soft);margin:0 0 20px;}
+.login-card .field{text-align:left;}
+.login-error{color:var(--rose);font-size:12.5px;margin:-6px 0 12px;min-height:16px;}
+.loading-screen .mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(155deg,var(--accent-soft),var(--accent));animation:pulse 1.1s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+
+@media (max-width: 900px){
+  .app{flex-direction:column;}
+  .mobile-topbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:55;background:var(--accent-dark);color:#F3E7D6;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;}
+  .mobile-topbar-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(155deg,var(--accent-soft),var(--accent));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:12px;color:#3B220C;flex:0 0 auto;}
+  .mobile-topbar-title{font-family:'Fraunces',serif;font-weight:600;font-size:16px;flex:1;}
+  .brand{display:none;}
+  .sidebar-foot{display:none;}
+  .sidebar{
+    position:fixed;left:0;right:0;bottom:0;z-index:55;
+    width:100%;flex:none;flex-direction:row;
+    background:var(--accent-dark);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    gap:2px;box-shadow:0 -6px 24px -8px rgba(0,0,0,0.35);
+  }
+  .nav-btn{
+    flex:1 1 0;min-width:0;flex-direction:column;justify-content:center;gap:3px;
+    padding:7px 2px;font-size:9.5px;line-height:1.15;text-align:center;border-radius:11px;position:relative;
+    word-break:break-word;
+  }
+  .nav-btn svg{width:19px;height:19px;}
+  .nav-count{position:absolute;top:2px;right:calc(50% - 22px);margin-left:0;font-size:9px;padding:1px 5px;min-width:15px;}
+  .main{padding:16px 14px calc(78px + env(safe-area-inset-bottom));}
+  .topbar{flex-direction:column;align-items:stretch;gap:12px;}
+  .topbar h2{font-size:21px;}
+  .topbar > div:last-child{display:flex;flex-direction:column;}
+  .topbar .btn{width:100%;justify-content:center;}
+  .board{grid-template-columns:repeat(6,82vw);gap:12px;scroll-snap-type:x mandatory;padding-bottom:6px;}
+  .col{scroll-snap-align:start;}
+  .cal-wrap{grid-template-columns:1fr;}
+  .cal-day{font-size:13px;}
+  .client-row{flex-direction:column;align-items:stretch;gap:12px;}
+  .client-row .progress-wrap{max-width:none;}
+  .report-grid{grid-template-columns:repeat(2,1fr);}
+  .metric-card .num{font-size:22px;}
+  .modal{max-width:100%;width:100%;border-radius:16px 16px 0 0;position:fixed;left:0;right:0;bottom:0;max-height:80vh;margin:0;padding:22px 18px calc(18px + env(safe-area-inset-bottom));}
+  .overlay{align-items:flex-end;padding:0;}
+  .btn{min-height:40px;}
+  .card-actions .btn, .agenda-actions .btn{min-height:36px;}
+  input, select, textarea{font-size:16px !important;} /* evita zoom automático en iOS */
+}
+@media (max-width: 480px){
+  .board{grid-template-columns:repeat(6,88vw);}
+  .compare-row{grid-template-columns:1fr;}
+  .bar-row{grid-template-columns:90px 1fr 30px;}
+  .report-grid{grid-template-columns:1fr 1fr;}
+}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* ---------- tabla panel de equipo ---------- */
+.team-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px;}
+.team-table th,.team-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;}
+.team-table th{background:var(--accent-soft);color:var(--accent-dark);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;}
+.team-table tbody tr:last-child td{border-bottom:none;}
+.team-table tbody tr:hover{background:rgba(166,85,30,0.05);}
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="mark"></div>
+  <div class="mono" style="font-size:12px;color:var(--ink-soft);">Cargando tu seguimiento…</div>
+</div>
+
+<div class="login-screen" id="loginScreen" style="display:none;">
+  <div class="login-card">
+    <div class="mark" style="margin:0 auto 14px;"></div>
+    <h1>Seguimiento</h1>
+    <p class="login-sub">Ingresa tu usuario para continuar</p>
+    <div class="field"><label>Usuario</label><input id="loginUser" autocomplete="username" placeholder="Ej. vendedor05" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"></div>
+    <div class="field"><label>Contraseña</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')attemptLogin()"></div>
+    <div id="loginError" class="login-error"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="attemptLogin()">Entrar</button>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none;">
+  <div class="mobile-topbar">
+    <div class="mobile-topbar-mark">RP</div>
+    <span class="mobile-topbar-title">Seguimiento</span>
+    <button class="mobile-more-btn" onclick="openMoreMenu()" aria-label="Más opciones">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.4" fill="currentColor" stroke="none"/></svg>
+    </button>
+  </div>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">RP</div>
+      <h1>Seguimiento</h1>
+      <p>Prospectos &amp; clientes</p>
+    </div>
+    <button class="nav-btn active" data-view="pipeline" onclick="setView('pipeline')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
+      Pipeline
+      <span class="nav-count" id="countPipeline">0</span>
+    </button>
+    <button class="nav-btn" data-view="clientes" onclick="setView('clientes')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+      En seguimiento
+      <span class="nav-count" id="countClientes">0</span>
+    </button>
+    <button class="nav-btn" data-view="calendario" onclick="setView('calendario')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      Calendario
+      <span class="nav-count" id="countHoy">0</span>
+    </button>
+    <button class="nav-btn" data-view="reporte" onclick="setView('reporte')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M11 19V4M18 19v-7"/></svg>
+      Reporte semanal
+    </button>
+    <button class="nav-btn" data-view="reclutamiento" onclick="setView('reclutamiento')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M17 4.5c1.4.5 2.3 1.7 2.3 3.1S18.4 10.2 17 10.7M22 20c0-2.8-1.8-5-4.5-5.7"/></svg>
+      Reclutamiento
+      <span class="nav-count" id="countRecruits">0</span>
+    </button>
+    <button class="nav-btn" data-view="direcciones" onclick="setView('direcciones')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+      Direcciones
+    </button>
+    <button class="nav-btn" id="navEquipo" data-view="equipo" onclick="setView('equipo')" style="display:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Equipo
+    </button>
+    <div class="sidebar-foot">
+      Tus datos se guardan automáticamente y solo tú los ves.
+      <button class="backup-btn" onclick="downloadBackup()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+        Descargar respaldo
+      </button>
+      <label class="backup-btn" for="restoreInput">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 0l-4 4m4-4l4 4M4 5h16"/></svg>
+        Restaurar respaldo
+      </label>
+      <input type="file" id="restoreInput" accept="application/json" class="file-input-hidden" onchange="handleRestoreFile(event)">
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- PIPELINE -->
+    <section id="view-pipeline">
+      <div class="topbar">
+        <div>
+          <h2>Pipeline de prospectos</h2>
+          <p>Prospecto → Contacto → Cita → Demo realizada → Venta</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <label class="btn btn-ghost" for="surveyPhotoInput">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h3l2-2h6l2 2h3v13H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+            Subir foto de encuesta
+          </label>
+          <input type="file" id="surveyPhotoInput" accept="image/*" class="file-input-hidden" onchange="handleSurveyPhoto(event)">
+          <button class="btn btn-primary" onclick="openAddProspect()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            Nuevo prospecto
+          </button>
+        </div>
+      </div>
+      <div class="board" id="board"></div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section id="view-clientes" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Clientes en seguimiento</h2>
+          <p>Plan de un año generado automáticamente al marcar la venta</p>
+        </div>
+      </div>
+      <div class="client-list" id="clientList"></div>
+    </section>
+
+    <!-- CALENDARIO -->
+    <section id="view-calendario" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Calendario de actividades</h2>
+          <p>Toca un día para ver qué toca hacer, o agenda directo a Google Calendar</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="scheduleMonthToGoogleCalendar()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 14v4M10 16h4"/></svg>
+            Agendar todo el mes en Google Calendar
+          </button>
+          <button class="btn btn-ghost" onclick="exportMonthIcs()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+            Exportar este mes (.ics)
+          </button>
+        </div>
+      </div>
+      <div class="cal-wrap">
+        <div class="cal-card">
+          <div class="cal-head">
+            <h3 id="calMonthLabel"></h3>
+            <div class="cal-nav">
+              <button onclick="calShift(-1)">‹</button>
+              <button onclick="calShift(1)">›</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <div class="cal-card day-panel">
+          <h3 id="dayPanelTitle">Hoy</h3>
+          <div class="sub" id="dayPanelSub"></div>
+          <div id="dayPanelList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTE SEMANAL -->
+    <section id="view-reporte" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Reporte semanal</h2>
+          <p id="reportWeekLabel">Avance de esta semana vs. la anterior</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" onclick="shiftReportWeek(-1)">‹ Semana anterior</button>
+          <button class="btn btn-ghost" onclick="shiftReportWeek(1)">Semana siguiente ›</button>
+        </div>
+      </div>
+
+      <div class="report-grid" id="reportMetrics"></div>
+
+      <div class="cal-card" style="margin-top:18px;">
+        <h3 style="margin:0 0 4px;font-size:16px;">Embudo de conversión (acumulado)</h3>
+        <div class="sub" style="margin-bottom:14px;">Prospecto → Contacto → Cita → Demo → Venta</div>
+        <div id="funnelChart"></div>
+      </div>
+
+      <div class="cal-card" style="margin-top:18px;">
+        <h3 style="margin:0 0 4px;font-size:16px;">Esta semana vs. semana anterior</h3>
+        <div id="weekCompareChart" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="cal-card" style="margin-top:18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <h3 style="margin:0 0 4px;font-size:16px;">Análisis del gerente de ventas</h3>
+            <div class="sub" style="margin:0;">Se genera solo cada vez que entras a una semana nueva — o dale clic para actualizarlo</div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="genReportBtn" onclick="generateAIReport()">Generar análisis</button>
+        </div>
+        <div id="aiReportBox" class="ai-report"></div>
+      </div>
+    </section>
+
+    <!-- RECLUTAMIENTO -->
+    <section id="view-reclutamiento" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Reclutamiento</h2>
+          <p>Candidatos interesados en unirse al equipo</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="openImportIndeed()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+            Importar de Indeed
+          </button>
+          <button class="btn btn-primary" onclick="openAddRecruit()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            Nuevo candidato
+          </button>
+        </div>
+      </div>
+      <div class="board" id="recruitBoard"></div>
+    </section>
+
+    <!-- DIRECCIONES -->
+    <section id="view-direcciones" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Direcciones</h2>
+          <p>Tus contactos agrupados por colonia, para planear rutas de visita</p>
+        </div>
+      </div>
+      <div id="addressGroups"></div>
+    </section>
+
+    <!-- EQUIPO (solo administrador) -->
+    <section id="view-equipo" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Equipo</h2>
+          <p>Métricas comparativas de todo el equipo en el rango de fechas que elijas</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px;">
+        <div class="field"><label>Desde</label><input type="date" id="teamRangeStart"></div>
+        <div class="field"><label>Hasta</label><input type="date" id="teamRangeEnd"></div>
+        <button class="btn btn-ghost btn-sm" onclick="setTeamRangePreset('week')">Esta semana</button>
+        <button class="btn btn-ghost btn-sm" onclick="setTeamRangePreset('month')">Este mes</button>
+        <button class="btn btn-primary" onclick="renderTeamView()">Actualizar</button>
+      </div>
+      <div id="teamViewWrap"></div>
+      <div id="teamAnalysisWrap" style="margin-top:20px;"></div>
+    </section>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<div id="printArea"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+/* ============================================================
+   FIREBASE (base de datos en la nube para el Panel de Equipo)
+   Ya publicado en Vercel, GitHub Pages, Netlify o cualquier hosting normal,
+   esta conexión funciona sin problema — el bloqueo que veías antes era
+   exclusivo de la vista previa de Claude, no de Firebase en sí.
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCYLWDyIA7BUsFN5Nsuo49BBkWGlPCUQ9c",
+  authDomain: "crm-contactos-royal.firebaseapp.com",
+  projectId: "crm-contactos-royal",
+  storageBucket: "crm-contactos-royal.firebasestorage.app",
+  messagingSenderId: "295296828112",
+  appId: "1:295296828112:web:3e7b80ea12616007e954d5"
+};
+const FIREBASE_READY = FIREBASE_CONFIG.apiKey !== "PEGAR_AQUI";
+let fsDb = null;
+let fsAuth = null;
+if(FIREBASE_READY){
+  try{
+    firebase.initializeApp(FIREBASE_CONFIG);
+    fsDb = firebase.firestore();
+    fsAuth = firebase.auth();
+  }catch(e){ console.error('Error iniciando Firebase', e); }
+}
+/* Nota de seguridad: además de este archivo, en la consola de Firebase (Firestore >
+   Reglas) deben estar pegadas las reglas que restringen la lectura/escritura por
+   usuario. Ver el archivo "reglas-firestore.txt" que se entrega junto con este CRM. */
+/* ============================================================
+   DATOS Y PLANTILLA DE SEGUIMIENTO ANUAL
+   ============================================================ */
+const STAGES = ["prospecto","contacto","cita","demo","venta"];
+const STAGE_LABEL = {prospecto:"Prospecto",contacto:"Contacto",cita:"Cita",demo:"Demo realizada",venta:"Venta"};
+
+// Actividades relativas al día de la venta (curado del producto, primeros contactos)
+const ONBOARDING_TEMPLATE = [
+  {offset:1,  title:"Curado del producto", desc:"Se realiza el curado del producto (información de pagos) y cocinar con el cliente."},
+  {offset:7,  title:"Llamada de seguimiento de uso", desc:"Llamar para saber cómo les va funcionando el producto."},
+  {offset:15, title:"Mensaje sobre uso de producto", desc:"Mandar mensaje preguntando cómo ha usado el producto."},
+  {offset:21, title:"Llamada de pagos", desc:"Llamar para ver si ya realizó su pago o si le ayudas en algo. (Preparar algo)"},
+];
+
+// Calendario anual fijo (mes/día), se agenda en la primera ocurrencia después de la venta
+const ANNUAL_TEMPLATE = [
+  {month:2, day:10, title:"Enviar receta — Día del amor", desc:"Enviar receta para preparar un platillo por el día del amor."},
+  {month:2, day:25, title:"Llamada de cortesía", desc:"Marcar para saber cómo va con su producto o si tiene alguna duda. (Garantías)"},
+  {month:3, day:5,  title:"Enviar receta — Día de la mujer", desc:"Mandar receta de postre por el día de la mujer. Ofrecer una oferta de venta."},
+  {month:3, day:14, title:"Video promocional", desc:"Producto nuevo — contén tu demo gratuita."},
+  {month:3, day:25, title:"WhatsApp de seguimiento", desc:"Saludar al cliente, seguimiento de funcionamiento y avisar que en 15 días se le visita."},
+  {month:4, day:13, title:"Visita al cliente", desc:"Visita rápida para sacar programa 4 en 14 e invitar al show de mayo."},
+  {month:4, day:30, title:"Enviar receta — Día de las madres", desc:"Mandar receta con motivo del día de las madres."},
+  {month:5, day:10, title:"Felicitación día de las madres", desc:"Mandar mensaje de felicitación del día de las madres."},
+  {month:5, day:25, title:"Seguimiento", desc:"Contacto de seguimiento general con el cliente."},
+  {month:6, day:15, title:"Agendar servicio", desc:"Llamar para agendar el primer servicio de mantenimiento."},
+  {month:6, day:30, title:"Realizar servicio", desc:"Servicio de mantenimiento: buscar venta, reclutar o volverlo promotor."},
+  {month:7, day:15, title:"Recomendaciones", desc:"Enviar recomendaciones para un tipo de sartén y hacer seeding si no lo tiene."},
+  {month:7, day:30, title:"Enviar receta", desc:"Mandar receta al cliente."},
+  {month:8, day:15, title:"Anuncio show de cocina", desc:"Comentar que tendrán show de cocina y llamar para dar información."},
+  {month:8, day:30, title:"Invitación", desc:"Visitar para llevar invitación y mostrar 2 productos."},
+  {month:9, day:10, title:"Receta + recordatorio de show", desc:"Mandar receta alusiva a septiembre e invitar al show de cocina."},
+  {month:9, day:16, title:"Seeding post-show", desc:"Mandar mensaje de 'no te fue posible acompañarnos', video del show, avisar de promociones y agendar cita."},
+  {month:9, day:25, title:"Receta producto nuevo", desc:"Mandar receta con el producto nuevo, avisar que aún hay 2 paquetes disponibles."},
+  {month:10,day:15, title:"Visita 2 productos", desc:"Buscar la opinión del cliente sobre dos productos."},
+  {month:10,day:25, title:"Encuesta", desc:"Mandar encuesta para saber qué le gustaría que hiciéramos (cocinar, mantenimiento, etc.)."},
+  {month:11,day:15, title:"Receta + garantías", desc:"Receta de postres y avisar sobre revisión de garantías."},
+  {month:11,day:25, title:"Revisión de garantías", desc:"Agendar revisión de garantías."},
+  {month:12,day:5,  title:"Receta navideña", desc:"Postre navideño; preguntar si le gustaría cocinarlo con nosotros y agendar cita."},
+  {month:12,day:15, title:"Receta para cena", desc:"Mandar receta para cena."},
+];
+
+let DATA = {prospects: [], recruits: [], events: [], reports: {}, nextId: 1, nextRecruitId: 1, settings: {sellerName:'', modules:['Bodega Aurrera de la Luna']}};
+
+/* ============================================================
+   USUARIOS Y SESIÓN
+   ============================================================ */
+// Aviso: esto es una cortina de acceso simple, no seguridad real — cualquiera que
+// vea el código fuente de la página puede ver estas contraseñas. Sirve para que
+// solo tu equipo entre, no para proteger datos sensibles de verdad.
+const CREDENTIALS = {
+  'Ian01':'Leon91', 'Julio01':'Aguila24', 'vendedor03':'Rio13', 'vendedor04':'Sol45',
+  'vendedor05':'Luna41', 'vendedor06':'Roble38', 'vendedor07':'Ola27', 'vendedor08':'Cielo23',
+  'vendedor09':'Nube96', 'vendedor10':'Faro79', 'vendedor11':'Flor21', 'vendedor12':'Mar85',
+  'vendedor13':'Viento64', 'vendedor14':'Piedra14', 'vendedor15':'Bosque13', 'vendedor16':'Estrella21',
+  'vendedor17':'Fuego37', 'vendedor18':'Nieve39', 'vendedor19':'Rayo74', 'vendedor20':'Vela87',
+  'Victor01':'Dany1402..'
+};
+const ADMIN_USERS = ['Victor01'];
+let currentUser = null;
+function isAdmin(){ return ADMIN_USERS.includes(currentUser); }
+
+async function attemptLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.querySelector('.login-card .btn-primary');
+  errEl.textContent = '';
+
+  // Primer filtro: usuario/contraseña conocidos (lista de tu equipo)
+  if(!CREDENTIALS[u] || CREDENTIALS[u]!==p){
+    errEl.textContent = 'Usuario o contraseña incorrectos.';
+    return;
+  }
+
+  // Si hay nube conectada, además hay que iniciar sesión "de verdad" con
+  // Firebase Auth — esto es lo que permite que las Reglas de Firestore
+  // sepan quién eres y solo te dejen leer/escribir tus propios datos.
+  if(FIREBASE_READY && fsAuth){
+    if(btn) btn.disabled = true;
+    const email = u.toLowerCase()+'@rp-crm.local';
+    try{
+      await fsAuth.signInWithEmailAndPassword(email, p);
+    }catch(signInErr){
+      const nuevoUsuario = ['auth/user-not-found','auth/invalid-credential','auth/invalid-login-credentials'].includes(signInErr.code);
+      if(nuevoUsuario){
+        try{
+          // Primera vez que este usuario entra: se crea su cuenta segura en automático
+          await fsAuth.createUserWithEmailAndPassword(email, p);
+        }catch(createErr){
+          console.error(createErr);
+          if(btn) btn.disabled = false;
+          errEl.textContent = 'No se pudo validar tu acceso seguro. Intenta de nuevo.';
+          return;
+        }
+      } else {
+        console.error(signInErr);
+        if(btn) btn.disabled = false;
+        errEl.textContent = 'No se pudo validar tu acceso seguro. Intenta de nuevo.';
+        return;
+      }
+    }
+    if(btn) btn.disabled = false;
+  }
+
+  currentUser = u;
+  try{ sessionStorage.setItem('crm-current-user', u); }catch(e){}
+  startApp();
+}function logout(){
+  currentUser = null;
+  try{ sessionStorage.removeItem('crm-current-user'); }catch(e){}
+  if(FIREBASE_READY && fsAuth){ fsAuth.signOut().catch(()=>{}); }
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  setTimeout(()=>document.getElementById('loginUser')?.focus(),50);
+}
+
+/* ============================================================
+   PERSISTENCIA (con respaldo a localStorage si se usa fuera de Claude,
+   por ejemplo publicado en Netlify, donde window.storage no existe)
+   ============================================================ */
+function storageKey(){ return 'crm-data-'+currentUser; }
+async function storageGetRaw(key){
+  if(FIREBASE_READY && fsDb){
+    try{
+      const doc = await fsDb.collection('crm_users').doc(key).get();
+      if(doc.exists) return {value: doc.data().json};
+      return null;
+    }catch(e){ console.error('Error leyendo de Firestore', e); /* seguimos con el respaldo local */ }
+  }
+  if(window.storage){
+    try{ return await window.storage.get(key, true); }catch(e){ return null; }
+  }
+  try{
+    const v = localStorage.getItem(key);
+    return v ? {value:v} : null;
+  }catch(e){ return null; }
+}
+async function storageSetRaw(key, value){
+  if(FIREBASE_READY && fsDb){
+    try{
+      const ownerUid = (fsAuth && fsAuth.currentUser) ? fsAuth.currentUser.uid : null;
+      await fsDb.collection('crm_users').doc(key).set({json:value, updatedAt: new Date().toISOString(), user:currentUser, ownerUid});
+      return;
+    }catch(e){ console.error('Error guardando en Firestore', e); /* seguimos con el respaldo local */ }
+  }
+  if(window.storage){
+    return await window.storage.set(key, value, true);
+  }
+  localStorage.setItem(key, value);
+}
+
+async function loadData(){
+  try{
+    const res = await storageGetRaw(storageKey());
+    if(res && res.value){ DATA = JSON.parse(res.value); }
+  }catch(e){ /* no existe todavía, se queda el default */ }
+  // asegurar que existan las estructuras nuevas aunque los datos vengan de una versión anterior
+  if(!DATA.recruits) DATA.recruits = [];
+  if(!DATA.events) DATA.events = [];
+  if(!DATA.reports) DATA.reports = {};
+  if(!DATA.nextRecruitId) DATA.nextRecruitId = 1;
+  if(!DATA.settings) DATA.settings = {sellerName:'', modules:['Bodega Aurrera de la Luna']};
+  if(!DATA.settings.modules) DATA.settings.modules = ['Bodega Aurrera de la Luna'];
+  else if(!DATA.settings.modules.includes('Bodega Aurrera de la Luna')) DATA.settings.modules.push('Bodega Aurrera de la Luna');
+}
+function logEvent(type, name, extra, date){
+  DATA.events.push({date: date || toISODate(new Date()), type, name, ...(extra||{})});
+}
+async function saveData(){
+  try{
+    await storageSetRaw(storageKey(), JSON.stringify(DATA));
+  }catch(e){
+    console.error('Error guardando', e);
+    toast('No se pudo guardar. Intenta de nuevo.');
+  }
+}
+
+/* ============================================================
+   UTILIDADES DE FECHA
+   ============================================================ */
+function pad(n){return String(n).padStart(2,'0');}
+function toISODate(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fromISODate(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function addDays(dateStr, n){const d=fromISODate(dateStr);d.setDate(d.getDate()+n);return toISODate(d);}
+function daysBetween(dateStrA, dateStrB){
+  const a = fromISODate(dateStrA), b = fromISODate(dateStrB);
+  return Math.round((b-a)/(1000*60*60*24));
+}
+function fmtLong(dateStr){
+  const d = fromISODate(dateStr);
+  return d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function fmtShort(dateStr){
+  const d = fromISODate(dateStr);
+  return d.toLocaleDateString('es-MX',{day:'numeric',month:'short'});
+}
+function nextOccurrence(saleDateStr, month, day){
+  const sale = fromISODate(saleDateStr);
+  let year = sale.getFullYear();
+  let candidate = new Date(year, month-1, day);
+  if(candidate < sale) candidate = new Date(year+1, month-1, day);
+  return toISODate(candidate);
+}
+
+/* ============================================================
+   GENERAR PLAN DE SEGUIMIENTO AL MARCAR VENTA
+   ============================================================ */
+function generatePlan(saleDateStr){
+  const plan = [];
+  let uid = 1;
+  ONBOARDING_TEMPLATE.forEach(t=>{
+    plan.push({id:'a'+(uid++), date: addDays(saleDateStr, t.offset), title:t.title, desc:t.desc, done:false});
+  });
+  ANNUAL_TEMPLATE.forEach(t=>{
+    plan.push({id:'a'+(uid++), date: nextOccurrence(saleDateStr, t.month, t.day), title:t.title, desc:t.desc, done:false});
+  });
+  plan.sort((a,b)=> a.date.localeCompare(b.date));
+  return plan;
+}
+
+/* ============================================================
+   HELPERS DE PROSPECTOS
+   ============================================================ */
+function getProspect(id){ return DATA.prospects.find(p=>p.id===id); }
+function pushHistory(p, note){ p.history.push({date: toISODate(new Date()), note}); }
+function addNote(p, text){
+  if(!p.notesLog) p.notesLog=[];
+  p.notesLog.push({date: toISODate(new Date()), text});
+}
+
+function addProspect(name, phone, notes, prospectDate, clientType, address, colonia, survey){
+  survey = survey || {};
+  const pDate = prospectDate || toISODate(new Date());
+  const p = {
+    id: 'p'+DATA.nextId++,
+    name, phone,
+    address: address||'', colonia: colonia||'',
+    clientType: clientType || 'no_cliente',
+    stage:'prospecto',
+    prospectDate: pDate,
+    contactStatus:null,
+    saleDate:null, saleAmount:0, saleResult:null, saleReason:null,
+    plan:[],
+    notesLog:[],
+    // datos de la encuesta, usados para generar mensajes de WhatsApp personalizados
+    meetPlace: survey.meetPlace || '',
+    likesCooking: survey.likesCooking || '',   // 'si' | 'no' | ''
+    caresHealth: survey.caresHealth || '',     // 'si' | 'no' | ''
+    familyHistory: survey.familyHistory || [], // ['cancer','diabetes','hipertension']
+    cookFor: survey.cookFor || '',
+    cookware: survey.cookware || '',
+    history:[{date: pDate, note:'Prospecto agregado'}]
+  };
+  if(notes) addNote(p, notes);
+  DATA.prospects.push(p);
+  logEvent('nuevo', p.name, {id:p.id}, pDate);
+  saveData(); renderAll();
+  toast('Prospecto agregado');
+  return p.id;
+}
+
+function updateProspect(id, fields){
+  const p = getProspect(id);
+  if(!p) return;
+  Object.assign(p, fields);
+  saveData(); renderAll();
+}
+
+function moveStage(id, newStage, extra){
+  const p = getProspect(id);
+  if(!p) return;
+  p.stage = newStage;
+  if(newStage==='contacto'){ pushHistory(p,'Pasó a contacto'); logEvent('contacto', p.name, {id:p.id}); }
+  if(newStage==='cita'){ pushHistory(p,'Cita agendada'); logEvent('cita', p.name, {id:p.id}); }
+  if(newStage==='no_interesado'){ pushHistory(p,'Marcado como no interesado'); logEvent('no_interesado', p.name, {id:p.id}); }
+  if(newStage==='demo'){ pushHistory(p,'Demo realizada'); logEvent('demo', p.name, {id:p.id}); }
+  if(newStage==='venta'){
+    p.saleDate = extra && extra.saleDate ? extra.saleDate : toISODate(new Date());
+    p.saleAmount = extra && extra.amount ? Number(extra.amount) : 0;
+    p.plan = generatePlan(p.saleDate);
+    pushHistory(p, 'Venta cerrada — $'+p.saleAmount.toLocaleString('es-MX')+' — plan de seguimiento de 1 año generado');
+    logEvent('venta', p.name, {id:p.id, amount: p.saleAmount});
+  }
+  if(newStage==='no_venta'){
+    p.saleResult='no_venta'; p.saleReason = extra && extra.reason ? extra.reason : '';
+    pushHistory(p, 'Marcado como no venta'+(p.saleReason?': '+p.saleReason:''));
+    logEvent('no_venta', p.name, {id:p.id, reason:p.saleReason});
+  }
+  if(newStage==='no_realizada'){
+    p.noShowReason = extra && extra.reason ? extra.reason : '';
+    pushHistory(p, 'Cita no realizada'+(p.noShowReason?': '+p.noShowReason:''));
+    logEvent('no_realizada', p.name, {id:p.id, reason:p.noShowReason});
+  }
+  saveData(); renderAll();
+}
+
+function revertStage(id, targetStage){
+  const p = getProspect(id);
+  if(!p) return;
+  p.stage = targetStage;
+  pushHistory(p, 'Regresado a '+(STAGE_LABEL[targetStage]||targetStage)+' (manual)');
+  saveData(); renderAll();
+  toast('Regresado a '+(STAGE_LABEL[targetStage]||targetStage));
+}
+
+/* ---------- Arrastrar y soltar: solo permite regresar una etapa antes ---------- */
+let dragState = null;
+function handleDragStart(e, id, stage){
+  dragState = {id, stage};
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try{ e.dataTransfer.setData('text/plain', id); }catch(err){}
+}
+function handleDragOver(e, colKey){
+  if(!dragState) return;
+  const idx = STAGES.indexOf(dragState.stage);
+  const targetIdx = STAGES.indexOf(colKey);
+  if(targetIdx === idx - 1){
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+  }
+}
+function handleDragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+function handleDrop(e, colKey){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!dragState) return;
+  const idx = STAGES.indexOf(dragState.stage);
+  const targetIdx = STAGES.indexOf(colKey);
+  if(targetIdx === idx - 1){
+    revertStage(dragState.id, colKey);
+  }
+  dragState = null;
+}
+
+/* ============================================================
+   VISTAS / NAVEGACIÓN
+   ============================================================ */
+let currentView = 'pipeline';
+function setView(v){
+  currentView = v;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+  ['pipeline','clientes','calendario','reporte','reclutamiento','direcciones','equipo'].forEach(id=>{
+    document.getElementById('view-'+id).style.display = (id===v)?'block':'none';
+  });
+  window.scrollTo({top:0, left:0, behavior:'instant'});
+  if(v==='calendario') renderCalendar();
+  if(v==='reporte'){ renderReportView(); maybeAutoGenerateReport(); }
+  if(v==='reclutamiento') renderRecruitBoard();
+  if(v==='direcciones') renderAddressGroups();
+  if(v==='equipo') renderTeamView();
+}
+
+function renderAll(){
+  renderBoard();
+  renderClients();
+  renderRecruitBoard();
+  updateCounts();
+  if(currentView==='calendario') renderCalendar();
+  if(currentView==='reporte') renderReportView();
+  if(currentView==='direcciones') renderAddressGroups();
+}
+
+function updateCounts(){
+  const active = DATA.prospects.filter(p=>['prospecto','contacto','cita','demo'].includes(p.stage));
+  document.getElementById('countPipeline').textContent = active.length;
+  const clients = DATA.prospects.filter(p=>p.stage==='venta');
+  document.getElementById('countClientes').textContent = clients.length;
+  const today = toISODate(new Date());
+  let dueToday = 0;
+  clients.forEach(c=> c.plan.forEach(a=>{ if(!a.done && a.date<=today) dueToday++; }));
+  document.getElementById('countHoy').textContent = dueToday;
+  const activeRecruits = DATA.recruits.filter(r=>['interesado','platica','entrevista'].includes(r.stage));
+  document.getElementById('countRecruits').textContent = activeRecruits.length;
+}
+
+/* ---------- PIPELINE BOARD ---------- */
+const BOARD_COLUMNS = [
+  {key:'prospecto', label:'Prospecto'},
+  {key:'contacto', label:'Contacto'},
+  {key:'cita', label:'Cita'},
+  {key:'demo', label:'Demo realizada'},
+  {key:'venta', label:'Venta'},
+  {key:'descartados', label:'Descartados'},
+];
+
+function daysSinceNote(p, noteSubstr){
+  const entries = p.history.filter(h=>h.note.includes(noteSubstr));
+  if(entries.length===0) return null;
+  return daysBetween(entries[entries.length-1].date, toISODate(new Date()));
+}
+function isStaleNoInteresado(p){
+  if(p.stage!=='no_interesado') return false;
+  const days = daysSinceNote(p,'Marcado como no interesado');
+  return days!==null && days>=7;
+}
+
+function renderBoard(){
+  const board = document.getElementById('board');
+  board.innerHTML='';
+  BOARD_COLUMNS.forEach((col,i)=>{
+    let items;
+    if(col.key==='descartados'){
+      items = DATA.prospects.filter(p=>
+        (p.stage==='no_interesado' && !isStaleNoInteresado(p))
+        || p.stage==='no_venta'
+        || p.stage==='no_realizada'
+      );
+    } else {
+      items = DATA.prospects.filter(p=>p.stage===col.key);
+    }
+    const colEl = document.createElement('div');
+    colEl.className='col';
+    if(STAGES.includes(col.key)){
+      colEl.ondragover = (e)=>handleDragOver(e, col.key);
+      colEl.ondragleave = handleDragLeave;
+      colEl.ondrop = (e)=>handleDrop(e, col.key);
+    }
+    colEl.innerHTML = `<div class="col-head">
+        <span class="col-num mono">0${i+1}</span>
+        <span class="col-title">${col.label}</span>
+        <span class="col-count mono">${items.length}</span>
+      </div>`;
+    if(items.length===0){
+      const e = document.createElement('div');
+      e.className='empty-col';
+      e.textContent = 'Sin prospectos aquí';
+      colEl.appendChild(e);
+    }
+    items.forEach(p=> colEl.appendChild(renderCard(p, col.key)));
+    if(col.key==='descartados'){
+      const staleCount = DATA.prospects.filter(isStaleNoInteresado).length;
+      if(staleCount>0){
+        const link = document.createElement('button');
+        link.className='btn btn-sm btn-ghost';
+        link.style.width='100%';
+        link.textContent = `Ver ${staleCount} archivado${staleCount===1?'':'s'} (no interesado hace +1 semana)`;
+        link.onclick = openArchivedList;
+        colEl.appendChild(link);
+      }
+    }
+    board.appendChild(colEl);
+  });
+}
+
+function openArchivedList(){
+  const stale = DATA.prospects.filter(isStaleNoInteresado)
+    .sort((a,b)=> a.name.localeCompare(b.name,'es'));
+  const rowsHtml = stale.map(p=>`<div class="agenda-item">
+      <h5>${escapeHtml(p.name)}</h5>
+      ${p.phone?`<p>${telLink(p.phone)}</p>`:''}
+      <div class="agenda-actions"><button class="btn btn-sm btn-sage" onclick="closeModal(); moveStage('${p.id}','prospecto');">Reactivar</button></div>
+    </div>`).join('');
+  showModal(`
+    <h3>Contactos archivados</h3>
+    <div class="sub">No interesados hace más de una semana — ya no ocupan espacio en el tablero, pero siguen guardados. Puedes reactivar cualquiera si cambia de opinión.</div>
+    <div style="max-height:400px;overflow-y:auto;">${rowsHtml || '<div class="no-events">No hay archivados.</div>'}</div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div>
+  `);
+}
+
+function renderCard(p, colKey){
+  const card = document.createElement('div');
+  card.className='card';
+  const canDragBack = ['contacto','cita','demo'].includes(p.stage);
+  if(canDragBack){
+    card.draggable = true;
+    card.ondragstart = (e)=>handleDragStart(e, p.id, p.stage);
+    card.ondragend = ()=>{ card.classList.remove('dragging'); };
+  }
+  let metaLine = 'Prospectado '+fmtShort(p.prospectDate || p.history[0].date);
+  let tagHtml = '<span class="tag '+(p.clientType==='cliente'?'tag-blue':'tag-neutral')+'">'+(p.clientType==='cliente'?'Cliente existente':'No cliente')+'</span>';
+  if(colKey==='descartados'){
+    if(p.stage==='no_interesado') tagHtml += ' <span class="tag tag-rose">No interesado</span>';
+    else if(p.stage==='no_realizada') tagHtml += ' <span class="tag tag-rose">Cita no realizada'+(p.noShowReason?': '+escapeHtml(p.noShowReason):'')+'</span>';
+    else tagHtml += ' <span class="tag tag-rose">No venta'+(p.saleReason?': '+escapeHtml(p.saleReason):'')+'</span>';
+  }
+  const notesLog = p.notesLog || [];
+  const latestNote = notesLog.length ? notesLog[notesLog.length-1] : (p.notes ? {date:p.prospectDate, text:p.notes} : null);
+  card.innerHTML = `
+    <h4>${escapeHtml(p.name)}</h4>
+    <div class="meta">${p.phone? telLink(p.phone)+' · ' : ''}${escapeHtml(metaLine)}</div>
+    ${latestNote?`<div class="notes">${escapeHtml(latestNote.text)}</div>`:''}
+    <div style="margin-bottom:8px;">${tagHtml}</div>
+    <div class="card-actions" id="actions-${p.id}"></div>
+  `;
+  const actions = card.querySelector('.card-actions');
+
+  if(p.stage==='prospecto'){
+    actions.appendChild(makeBtn('Pasó a contacto','btn-primary',()=>moveStage(p.id,'contacto')));
+    actions.appendChild(makeBtn('💬 Mensaje inicial','btn-ghost',()=>openWaModal(p.id,'inicial')));
+  } else if(p.stage==='contacto'){
+    actions.appendChild(makeBtn('◀','btn-ghost',()=>revertStage(p.id,'prospecto'),'Regresar a Prospecto'));
+    actions.appendChild(makeBtn('Cita','btn-sage',()=>openCitaModal(p.id)));
+    actions.appendChild(makeBtn('No interesado','btn-rose',()=>moveStage(p.id,'no_interesado')));
+    actions.appendChild(makeBtn('💬 Mensaje inicial','btn-ghost',()=>openWaModal(p.id,'inicial')));
+    actions.appendChild(makeBtn('💬 Seguimiento','btn-ghost',()=>openWaModal(p.id,'seguimiento')));
+  } else if(p.stage==='cita'){
+    actions.appendChild(makeBtn('◀','btn-ghost',()=>revertStage(p.id,'contacto'),'Regresar a Contacto'));
+    actions.appendChild(makeBtn('Demo realizada','btn-primary',()=>moveStage(p.id,'demo')));
+    actions.appendChild(makeBtn('No realizada','btn-rose',()=>openNoShowModal(p.id),'La cita no se llevó a cabo'));
+    actions.appendChild(makeBtn('No interesado','btn-rose',()=>moveStage(p.id,'no_interesado')));
+    actions.appendChild(makeBtn('💬 Seguimiento','btn-ghost',()=>openWaModal(p.id,'seguimiento')));
+  } else if(p.stage==='demo'){
+    actions.appendChild(makeBtn('◀','btn-ghost',()=>revertStage(p.id,'cita'),'Regresar a Cita'));
+    actions.appendChild(makeBtn('Venta','btn-sage',()=>openSaleModal(p.id)));
+    actions.appendChild(makeBtn('No venta','btn-rose',()=>openNoSaleModal(p.id)));
+  } else if(p.stage==='venta'){
+    const tag = document.createElement('span');
+    tag.className='tag tag-sage';
+    tag.textContent = 'Cliente — vendió '+fmtShort(p.saleDate);
+    actions.appendChild(tag);
+  } else {
+    actions.appendChild(makeBtn('Reactivar','btn-ghost',()=>moveStage(p.id,'prospecto')));
+  }
+  if(p.clientType==='cliente' && p.stage!=='venta'){
+    actions.appendChild(makeBtn('💬 Cliente existente','btn-ghost',()=>openWaModal(p.id,'cliente'),'Preguntar por sus sartenes, mantenimiento y garantías'));
+  }
+  actions.appendChild(makeBtn('Editar / notas','btn-ghost',()=>openEditProspect(p.id)));
+  return card;
+}
+
+function makeBtn(text, cls, fn, title){
+  const b = document.createElement('button');
+  b.className='btn btn-sm '+cls;
+  b.textContent=text;
+  b.onclick=fn;
+  if(title) b.title=title;
+  return b;
+}
+function escapeHtml(s){
+  const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML;
+}
+function telLink(phone){
+  if(!phone) return '';
+  const clean = phone.replace(/[^\d+]/g,'');
+  if(!clean) return escapeHtml(phone);
+  return `<a href="tel:${clean}" class="tel-link" onclick="event.stopPropagation()">📞 ${escapeHtml(phone)}</a>`;
+}
+
+/* ---------- MODALS: agregar / venta / no venta ---------- */
+function surveyFieldsHtml(prefix, d){
+  d = d || {};
+  const fh = d.familyHistory || [];
+  const modules = (DATA.settings && DATA.settings.modules) || [];
+  const isOther = d.meetPlace && !modules.includes(d.meetPlace);
+  return `
+    <h3 style="font-size:13px;margin:18px 0 8px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;">Datos de la encuesta (para mensajes de WhatsApp)</h3>
+    <div class="field"><label>¿Dónde lo conoció? (módulo)</label>
+      <select id="${prefix}MeetPlaceSelect" onchange="toggleMeetPlaceOther('${prefix}')">
+        ${modules.map(m=>`<option value="${escapeAttr(m)}" ${d.meetPlace===m?'selected':''}>${escapeHtml(m)}</option>`).join('')}
+        <option value="__other__" ${isOther?'selected':''}>Otro (escribir)</option>
+      </select>
+    </div>
+    <div class="field" id="${prefix}MeetPlaceOtherWrap" style="display:${isOther?'block':'none'};">
+      <input id="${prefix}MeetPlace" placeholder="Escribe el módulo" value="${escapeAttr(isOther?d.meetPlace:'')}">
+    </div>
+    <div class="field"><label>¿Le gusta cocinar?</label>
+      <select id="${prefix}LikesCooking">
+        <option value="" ${!d.likesCooking?'selected':''}>No especificado</option>
+        <option value="si" ${d.likesCooking==='si'?'selected':''}>Sí</option>
+        <option value="no" ${d.likesCooking==='no'?'selected':''}>No</option>
+      </select>
+    </div>
+    <div class="field"><label>¿Le interesa cuidar su salud?</label>
+      <select id="${prefix}CaresHealth">
+        <option value="" ${!d.caresHealth?'selected':''}>No especificado</option>
+        <option value="si" ${d.caresHealth==='si'?'selected':''}>Sí</option>
+        <option value="no" ${d.caresHealth==='no'?'selected':''}>No</option>
+      </select>
+    </div>
+    <div class="field"><label>Antecedentes familiares</label>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px;padding:4px 0;">
+        <label style="display:flex;align-items:center;gap:5px;font-weight:400;color:var(--ink);"><input type="checkbox" id="${prefix}HistCancer" ${fh.includes('cancer')?'checked':''}> Cáncer</label>
+        <label style="display:flex;align-items:center;gap:5px;font-weight:400;color:var(--ink);"><input type="checkbox" id="${prefix}HistDiabetes" ${fh.includes('diabetes')?'checked':''}> Diabetes</label>
+        <label style="display:flex;align-items:center;gap:5px;font-weight:400;color:var(--ink);"><input type="checkbox" id="${prefix}HistHiper" ${fh.includes('hipertension')?'checked':''}> Hipertensión</label>
+      </div>
+    </div>
+    <div class="field"><label>¿Para cuántas personas cocina?</label><input id="${prefix}CookFor" placeholder="Ej. 4" value="${escapeAttr(d.cookFor||'')}"></div>
+    <div class="field"><label>¿Con qué utensilios cocina actualmente?</label><input id="${prefix}Cookware" placeholder="Ej. teflón, peltre..." value="${escapeAttr(d.cookware||'')}"></div>
+  `;
+}
+function toggleMeetPlaceOther(prefix){
+  const sel = document.getElementById(prefix+'MeetPlaceSelect');
+  const wrap = document.getElementById(prefix+'MeetPlaceOtherWrap');
+  if(!sel || !wrap) return;
+  wrap.style.display = sel.value==='__other__' ? 'block' : 'none';
+}
+function readSurveyFields(prefix){
+  const fh = [];
+  if(document.getElementById(prefix+'HistCancer').checked) fh.push('cancer');
+  if(document.getElementById(prefix+'HistDiabetes').checked) fh.push('diabetes');
+  if(document.getElementById(prefix+'HistHiper').checked) fh.push('hipertension');
+  const sel = document.getElementById(prefix+'MeetPlaceSelect');
+  let meetPlace = sel ? sel.value : '';
+  if(meetPlace==='__other__'){
+    meetPlace = document.getElementById(prefix+'MeetPlace').value.trim();
+    if(meetPlace && DATA.settings && DATA.settings.modules && !DATA.settings.modules.includes(meetPlace)){
+      DATA.settings.modules.push(meetPlace);
+      saveData();
+    }
+  }
+  return {
+    meetPlace,
+    likesCooking: document.getElementById(prefix+'LikesCooking').value,
+    caresHealth: document.getElementById(prefix+'CaresHealth').value,
+    familyHistory: fh,
+    cookFor: document.getElementById(prefix+'CookFor').value.trim(),
+    cookware: document.getElementById(prefix+'Cookware').value.trim(),
+  };
+}
+
+function openAddProspect(prefill){
+  prefill = prefill || {};
+  showModal(`
+    <h3>Nuevo prospecto</h3>
+    <div class="sub">${prefill.fromPhoto? 'Revisa los datos que se leyeron de la foto antes de agregarlo.' : 'Se agrega directo a la primera columna del pipeline.'}</div>
+    <div class="field"><label>Nombre</label><input id="npName" placeholder="Nombre del prospecto" value="${escapeAttr(prefill.name||'')}"></div>
+    <div class="field"><label>Teléfono</label><input id="npPhone" placeholder="Opcional" value="${escapeAttr(prefill.phone||'')}"></div>
+    <div class="field"><label>Dirección</label><input id="npAddress" placeholder="Calle y número" value="${escapeAttr(prefill.address||'')}"></div>
+    <div class="field"><label>Colonia</label><input id="npColonia" placeholder="Colonia / zona" value="${escapeAttr(prefill.colonia||'')}"></div>
+    <div class="field"><label>Fecha de prospección</label><input type="date" id="npDate" value="${toISODate(new Date())}"></div>
+    <div class="field"><label>¿Es cliente existente o no cliente?</label>
+      <select id="npClientType">
+        <option value="no_cliente">No cliente (prospecto nuevo)</option>
+        <option value="cliente">Cliente existente</option>
+      </select>
+    </div>
+    <div class="field"><label>Notas</label><textarea id="npNotes" placeholder="Cómo lo conociste, contexto, etc.">${escapeHtml(prefill.notes||'')}</textarea></div>
+    ${surveyFieldsHtml('np', prefill)}
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitAddProspect()">Agregar</button>
+    </div>
+  `);
+  // Solo enfocamos el campo de nombre si viene vacío — si ya trae datos (de la foto),
+  // enfocar abre el teclado sin necesidad y en el celular puede tapar el botón "Agregar".
+  if(!prefill.name){
+    setTimeout(()=>document.getElementById('npName').focus(),50);
+  }
+}
+function escapeAttr(s){ return String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+
+function submitAddProspect(){
+  const name = document.getElementById('npName').value.trim();
+  if(!name){ toast('Ponle un nombre al prospecto'); return; }
+  const phone = document.getElementById('npPhone').value.trim();
+  const address = document.getElementById('npAddress').value.trim();
+  const colonia = document.getElementById('npColonia').value.trim();
+  const notes = document.getElementById('npNotes').value.trim();
+  const clientType = document.getElementById('npClientType').value;
+  const prospectDate = document.getElementById('npDate').value || toISODate(new Date());
+  const survey = readSurveyFields('np');
+  const newId = addProspect(name, phone, notes, prospectDate, clientType, address, colonia, survey);
+  closeModal();
+  if(clientType==='cliente' && phone){
+    openWaModal(newId, 'cliente');
+  }
+}
+
+/* ---------- MODAL: editar prospecto y notas de seguimiento ---------- */
+function openEditProspect(id){
+  const p = getProspect(id);
+  if(!p) return;
+  const notesLog = p.notesLog || [];
+  const notesHtml = notesLog.length
+    ? notesLog.slice().reverse().map(n=>`<div class="note-entry"><div class="note-date">${fmtShort(n.date)}</div>${escapeHtml(n.text)}</div>`).join('')
+    : '<div class="notes-log-empty">Aún no hay notas de seguimiento.</div>';
+  showModal(`
+    <h3>Editar prospecto</h3>
+    <div class="sub">Etapa actual: ${STAGE_LABEL[p.stage] || (p.stage==='no_interesado'?'No interesado':'No venta')}</div>
+    <div class="field"><label>Nombre</label><input id="epName" value="${escapeAttr(p.name)}"></div>
+    <div class="field"><label>Teléfono</label><input id="epPhone" value="${escapeAttr(p.phone||'')}"></div>
+    <div class="field"><label>Dirección</label><input id="epAddress" placeholder="Calle y número" value="${escapeAttr(p.address||'')}"></div>
+    <div class="field"><label>Colonia</label><input id="epColonia" placeholder="Colonia / zona" value="${escapeAttr(p.colonia||'')}"></div>
+    <div class="field"><label>Fecha de prospección</label><input type="date" id="epDate" value="${p.prospectDate || toISODate(new Date())}"></div>
+    <div class="field"><label>¿Es cliente existente o no cliente?</label>
+      <select id="epClientType">
+        <option value="no_cliente" ${p.clientType!=='cliente'?'selected':''}>No cliente (prospecto nuevo)</option>
+        <option value="cliente" ${p.clientType==='cliente'?'selected':''}>Cliente existente</option>
+      </select>
+    </div>
+    ${surveyFieldsHtml('ep', p)}
+    <div class="modal-actions" style="margin-top:6px;">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitEditProspect('${id}')">Guardar cambios</button>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:20px 0;">
+    <h3 style="font-size:15px;">Notas de seguimiento</h3>
+    <div class="notes-log" id="notesLogWrap">${notesHtml}</div>
+    <div class="field"><textarea id="epNewNote" placeholder="Ej: quedó de pensarlo, le mando info del programa 4 en 14..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-sage btn-sm" onclick="submitAddNote('${id}')">Agregar nota</button>
+    </div>
+  `);
+}
+function submitEditProspect(id){
+  const name = document.getElementById('epName').value.trim();
+  if(!name){ toast('El nombre no puede quedar vacío'); return; }
+  const phone = document.getElementById('epPhone').value.trim();
+  const address = document.getElementById('epAddress').value.trim();
+  const colonia = document.getElementById('epColonia').value.trim();
+  const prospectDate = document.getElementById('epDate').value;
+  const clientType = document.getElementById('epClientType').value;
+  const survey = readSurveyFields('ep');
+  const p = getProspect(id);
+  const wasClient = p && p.clientType==='cliente';
+  updateProspect(id, {name, phone, address, colonia, prospectDate, clientType, ...survey});
+  closeModal();
+  toast('Prospecto actualizado');
+  if(clientType==='cliente' && !wasClient && phone){
+    openWaModal(id, 'cliente');
+  }
+}
+function submitAddNote(id){
+  const p = getProspect(id);
+  if(!p) return;
+  const text = document.getElementById('epNewNote').value.trim();
+  if(!text){ toast('Escribe algo para agregar la nota'); return; }
+  addNote(p, text);
+  saveData(); renderAll();
+  openEditProspect(id); // refresca el modal con la nota agregada
+}
+
+/* ============================================================
+   MENSAJE DE WHATSAPP PERSONALIZADO CON IA
+   ============================================================ */
+function cleanPhoneForWa(phone){
+  let digits = (phone||'').replace(/\D/g,'');
+  if(digits.length===10) digits = '52'+digits;               // celular MX de 10 dígitos
+  else if(digits.length===11 && digits.startsWith('1')) digits = '52'+digits.slice(1);
+  return digits;
+}
+
+function familyHistoryLabel(fh){
+  if(!fh || fh.length===0) return 'no especificado';
+  const map = {cancer:'cáncer', diabetes:'diabetes', hipertension:'hipertensión'};
+  return fh.map(k=>map[k]||k).join(', ');
+}
+
+function waModalTitle(kind){
+  if(kind==='inicial') return 'Mensaje inicial';
+  if(kind==='seguimiento') return 'Mensaje de seguimiento';
+  return 'Mensaje a cliente existente';
+}
+
+function openWaModal(id, kind){
+  const p = getProspect(id);
+  if(!p) return;
+  if(!p.phone){ toast('Este prospecto no tiene teléfono capturado'); return; }
+  const noSellerName = !(DATA.settings && DATA.settings.sellerName);
+  showModal(`
+    <h3>${waModalTitle(kind)} — ${escapeHtml(p.name)}</h3>
+    ${noSellerName ? `<div class="sub" style="color:var(--rose);">No has guardado tu nombre — <a href="#" onclick="closeModal(); openMoreMenu(); return false;" style="color:var(--rose);text-decoration:underline;">guárdalo aquí</a> para que el mensaje firme con tu nombre real, si no dirá "[Tu nombre]".</div>` : ''}
+    <div class="sub" id="waStatus">Generando mensaje con IA…</div>
+    <div class="field"><textarea id="waText" style="min-height:140px;" placeholder="Generando…" oninput="updateWaLink('${id}')"></textarea></div>
+    <a id="waOpenLink" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:10px;pointer-events:none;opacity:.5;" href="#" target="_blank" rel="noopener">Abrir en WhatsApp</a>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+      <button class="btn btn-sm btn-ghost" onclick="generateWaMessage('${id}','${kind}')">Regenerar</button>
+    </div>
+  `);
+  generateWaMessage(id, kind);
+}
+
+async function generateWaMessage(id, kind){
+  const p = getProspect(id);
+  if(!p) return;
+  const statusEl = document.getElementById('waStatus');
+  const textEl = document.getElementById('waText');
+  if(statusEl) statusEl.textContent = 'Generando mensaje con IA…';
+  if(textEl) textEl.value = '';
+
+  // Si no hay nombre guardado, usamos un marcador de texto claro en vez de una frase
+  // genérica — así la vendedora ve de inmediato que le falta rellenar su nombre real,
+  // en lugar de que la IA la "disfrace" con algo como "tu asesora de confianza".
+  const sellerName = (DATA.settings && DATA.settings.sellerName) ? DATA.settings.sellerName : '[Tu nombre]';
+
+  let prompt;
+  if(kind==='inicial'){
+    prompt = `Eres un asistente que ayuda a una distribuidora de Royal Prestige a redactar mensajes de WhatsApp cortos para invitar a un prospecto a una cita (plática de nutrición + degustación, donde se le cocina en su propia casa).
+
+Reglas obligatorias:
+- Máximo 4-5 líneas, tono casual pero con respeto, tratar de "usted" (el público es mayormente mujeres de 45+ años).
+- Nunca usar jerga juvenil (ej. "te late", "qué onda", etc.).
+- Nunca decirle a la persona qué debe cambiar o corregir (ej. no decir "deje el teflón").
+- Referirse a "familia", nunca desglosar "esposo e hijos" por separado.
+- Usar lenguaje de equipo: "le vamos a llevar", no "voy a llevar".
+- Nunca mencionar precios ni montos.
+- El mensaje siempre debe:
+  1. Empezar saludando por su nombre y presentarse de inmediato con el nombre de la vendedora (ej. "Hola [nombre prospecto], soy [nombre vendedora]"), y decir que le escribe referente al boletito que le regalaron en el módulo (mencionar el lugar/módulo, ej. Bodega Aurrera).
+  2. Decirle que salió ganadora de un regalo y una degustación.
+  3. Mencionar que también se le llevará una plática de nutrición.
+  4. Conectar con el mejor dato disponible del prospecto (ver prioridad abajo).
+  5. Cerrar preguntando qué día tiene disponible (entre semana o fin de semana).
+
+Prioridad para elegir el punto de conexión (usa los que apliquen, combina si hay varios buenos):
+1. Antecedente familiar de enfermedad (cáncer/diabetes/hipertensión) → conectar con la plática de nutrición como algo valioso dado ese antecedente.
+2. Le interesa cuidar su salud → reconocerle que ya cuida a su familia, y que la plática la ayuda a seguir haciéndolo.
+3. Nota libre relevante (ej. un familiar ya tiene el producto) → usarla para generar cercanía/confianza.
+4. Le gusta cocinar → mencionar que le va a gustar la parte de la cocinada.
+5. NO le gusta cocinar → enfocar en que la van a consentir preparándole un platillo rico sin que ella haga nada.
+6. NO le interesa la salud → enfocar más en el sabor de la comida y seguir cocinando rico, sin forzar el tema salud.
+7. Si no hay ningún dato disponible (encuesta vacía) → apoyarse solo en el regalo y la degustación, sin inventar información.
+
+Nunca inventes datos que no estén en la información proporcionada del prospecto. El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre].
+
+Datos del prospecto:
+- Nombre: ${p.name || 'no especificado'}
+- Dónde lo conoció: ${p.meetPlace || 'no especificado'}
+- Le gusta cocinar: ${p.likesCooking || 'no especificado'}
+- Le interesa la salud: ${p.caresHealth || 'no especificado'}
+- Antecedentes familiares: ${familyHistoryLabel(p.familyHistory)}
+- Personas para las que cocina: ${p.cookFor || 'no especificado'}
+- Utensilios actuales: ${p.cookware || 'no especificado'}
+- Nota libre: ${(p.notesLog && p.notesLog.length) ? p.notesLog[p.notesLog.length-1].text : (p.notes || 'no especificado')}
+
+Genera solo el mensaje final, sin explicaciones ni comillas.`;
+  } else if(kind==='seguimiento') {
+    prompt = `Eres un asistente que ayuda a una distribuidora de Royal Prestige a redactar un mensaje breve de seguimiento de WhatsApp para un prospecto al que ya se le escribió antes y no ha respondido o no ha confirmado cita.
+
+Reglas obligatorias:
+- Máximo 2-3 líneas, tono casual, tratar de "usted".
+- No sonar presionante ni de reclamo.
+- Recordar el regalo y la degustación mencionados antes, sin repetir todo el mensaje original.
+- Cerrar preguntando disponibilidad (entre semana o fin de semana).
+- Nunca mencionar precios.
+
+El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre].
+
+Datos del prospecto:
+- Nombre: ${p.name || 'no especificado'}
+
+Genera solo el mensaje final, sin explicaciones ni comillas.`;
+  } else {
+    // kind === 'cliente' — cliente que ya tiene el producto (cliente existente)
+    prompt = `Eres un asistente que ayuda a una distribuidora de Royal Prestige a redactar un mensaje breve de WhatsApp para un cliente que ya tiene su producto Royal Prestige (cliente existente), para retomar contacto con él/ella.
+
+Reglas obligatorias:
+- Máximo 4-5 líneas, tono casual y cercano, tratar de "usted".
+- Empezar saludando por su nombre y presentarse de inmediato con el nombre de la vendedora (ej. "Hola [nombre cliente], soy [nombre vendedora]"), mencionando que le escribe referente a la cortesía que le regalaron en el módulo/tienda donde se conocieron (usar el dato de dónde se conocieron si está disponible).
+- Preguntar cómo le ha funcionado el producto / cómo le ha ido con sus sartenes.
+- Preguntar por el servicio de mantenimiento (si ya lo tuvo, o si le gustaría agendarlo).
+- Mencionar la revisión de garantías, ofreciendo agendarla si gusta.
+- Al final, mencionar que ahorita se les está llevando un regalo a los clientes (sin inventar de qué se trata ni prometer una fecha exacta).
+- Nunca mencionar precios ni montos.
+- Usar lenguaje de equipo: "le vamos a llevar", no "voy a llevar".
+- Nunca inventes datos que no estén en la información proporcionada.
+
+El nombre de la vendedora que firma el mensaje es "${sellerName}" — úsalo donde normalmente iría [nombre].
+
+Datos del cliente:
+- Nombre: ${p.name || 'no especificado'}
+- Dónde se conocieron: ${p.meetPlace || 'no especificado'}
+
+Genera solo el mensaje final, sin explicaciones ni comillas.`;
+  }
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 400,
+        messages: [{role:"user", content: prompt}]
+      })
+    });
+    const json = await response.json();
+    const textBlock = (json.content||[]).find(b=>b.type==='text');
+    const message = textBlock ? textBlock.text.trim().replace(/^"|"$/g,'') : '';
+    const ta = document.getElementById('waText');
+    const status = document.getElementById('waStatus');
+    if(!ta) return; // el modal ya se cerró
+    if(!message){
+      if(status) status.textContent = 'No se pudo generar el mensaje. Intenta de nuevo.';
+      return;
+    }
+    ta.value = message;
+    if(status) status.textContent = 'Puedes editar el mensaje antes de abrirlo en WhatsApp.';
+    updateWaLink(id);
+  }catch(e){
+    console.error(e);
+    const status = document.getElementById('waStatus');
+    if(status) status.textContent = 'Hubo un error generando el mensaje. Intenta de nuevo.';
+  }
+}
+
+function updateWaLink(id){
+  const p = getProspect(id);
+  const ta = document.getElementById('waText');
+  const link = document.getElementById('waOpenLink');
+  if(!p || !ta || !link) return;
+  const text = ta.value.trim();
+  if(!text){ link.style.pointerEvents='none'; link.style.opacity='.5'; return; }
+  const phone = cleanPhoneForWa(p.phone);
+  link.href = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+  link.style.pointerEvents='auto'; link.style.opacity='1';
+}
+
+function openCitaModal(id){
+  const p = getProspect(id);
+  const todayISO = toISODate(new Date());
+  showModal(`
+    <h3>Agendar cita — ${escapeHtml(p.name)}</h3>
+    <div class="sub">Elige fecha y hora, luego abre Google Calendar para guardarla ahí mismo.</div>
+    <div class="field"><label>Fecha</label><input type="date" id="citaDate" value="${todayISO}" oninput="updateCitaLink('${id}')"></div>
+    <div class="field"><label>Hora (opcional)</label><input type="time" id="citaTime" oninput="updateCitaLink('${id}')"></div>
+    <a id="citaGcalLink" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:14px;" href="#" target="_blank" rel="noopener" onclick="setTimeout(()=>document.getElementById('citaConfirmBtn')?.focus(),200)">
+      Abrir en Google Calendar
+    </a>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-sage" id="citaConfirmBtn" onclick="confirmCita('${id}')">Ya la agendé — mover a Cita</button>
+    </div>
+  `);
+  updateCitaLink(id);
+}
+function updateCitaLink(id){
+  const p = getProspect(id);
+  if(!p) return;
+  const dateEl = document.getElementById('citaDate');
+  const timeEl = document.getElementById('citaTime');
+  const link = document.getElementById('citaGcalLink');
+  if(!dateEl || !link) return;
+  const date = dateEl.value || toISODate(new Date());
+  const time = timeEl.value;
+  let datesParam;
+  if(time){
+    const [h,m] = time.split(':');
+    const startCompact = date.replace(/-/g,'')+'T'+h+m+'00';
+    const endH = String((parseInt(h,10)+1)%24).padStart(2,'0');
+    const endCompact = date.replace(/-/g,'')+'T'+endH+m+'00';
+    datesParam = startCompact+'/'+endCompact;
+  } else {
+    const nextDay = addDays(date,1).replace(/-/g,'');
+    datesParam = date.replace(/-/g,'')+'/'+nextDay;
+  }
+  const text = encodeURIComponent('Cita — '+p.name);
+  const details = encodeURIComponent('Cita con prospecto '+p.name+(p.phone?' · '+p.phone:'')+'\n(Generado desde el CRM de seguimiento Royal Prestige)');
+  link.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${datesParam}&details=${details}`;
+}
+function confirmCita(id){
+  moveStage(id,'cita');
+  closeModal();
+}
+
+function openSaleModal(id){
+  const p = getProspect(id);
+  showModal(`
+    <h3>Registrar venta — ${escapeHtml(p.name)}</h3>
+    <div class="sub">Con la fecha de venta se genera automáticamente su plan de seguimiento de 1 año.</div>
+    <div class="field"><label>Fecha de venta</label><input type="date" id="saleDate" value="${toISODate(new Date())}"></div>
+    <div class="field"><label>Monto de venta</label><input type="number" id="saleAmount" placeholder="$" min="0" step="1"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-sage" onclick="submitSale('${id}')">Confirmar venta</button>
+    </div>
+  `);
+  setTimeout(()=>document.getElementById('saleAmount').focus(),50);
+}
+function submitSale(id){
+  const saleDate = document.getElementById('saleDate').value;
+  const amount = document.getElementById('saleAmount').value;
+  if(!amount || Number(amount)<=0){ toast('Ponle el monto de la venta'); return; }
+  moveStage(id,'venta',{saleDate, amount});
+  closeModal();
+  toast('Venta registrada — plan de 1 año generado');
+}
+
+function openNoSaleModal(id){
+  const p = getProspect(id);
+  showModal(`
+    <h3>Marcar no venta — ${escapeHtml(p.name)}</h3>
+    <div class="field"><label>Motivo (opcional)</label><textarea id="noSaleReason" placeholder="Precio, momento, competencia..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-rose" onclick="submitNoSale('${id}')">Confirmar</button>
+    </div>
+  `);
+}
+function submitNoSale(id){
+  const reason = document.getElementById('noSaleReason').value.trim();
+  moveStage(id,'no_venta',{reason});
+  closeModal();
+}
+
+function openNoShowModal(id){
+  const p = getProspect(id);
+  showModal(`
+    <h3>Cita no realizada — ${escapeHtml(p.name)}</h3>
+    <div class="sub">La cita no se llevó a cabo (no llegó, se canceló, etc.)</div>
+    <div class="field"><label>Motivo (opcional)</label><textarea id="noShowReason" placeholder="No llegó, se le olvidó, canceló..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-rose" onclick="submitNoShow('${id}')">Confirmar</button>
+    </div>
+  `);
+}
+function submitNoShow(id){
+  const reason = document.getElementById('noShowReason').value.trim();
+  moveStage(id,'no_realizada',{reason});
+  closeModal();
+}
+
+function showModal(html){
+  let ov = document.getElementById('overlay');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id='overlay'; ov.className='overlay';
+    ov.onclick = (e)=>{ if(e.target===ov) closeModal(); };
+    document.body.appendChild(ov);
+  }
+  ov.innerHTML = `<div class="modal">${html}</div>`;
+  ov.style.display='flex';
+}
+function closeModal(){
+  const ov = document.getElementById('overlay');
+  if(ov) ov.style.display='none';
+}
+
+/* ---------- CLIENTES EN SEGUIMIENTO ---------- */
+function renderClients(){
+  const wrap = document.getElementById('clientList');
+  const clients = DATA.prospects.filter(p=>p.stage==='venta');
+  wrap.innerHTML='';
+  if(clients.length===0){
+    wrap.innerHTML = '<div class="empty-col" style="padding:40px;">Aún no tienes clientes en seguimiento. Cuando marques una venta en el pipeline aparecerán aquí con su plan de 1 año.</div>';
+    return;
+  }
+  clients.sort((a,b)=> a.saleDate < b.saleDate ? 1 : -1);
+  clients.forEach(c=>{
+    const done = c.plan.filter(a=>a.done).length;
+    const total = c.plan.length;
+    const pct = total? Math.round(done/total*100):0;
+    const next = c.plan.filter(a=>!a.done).sort((a,b)=>a.date.localeCompare(b.date))[0];
+    const daysToClose = daysBetween(c.prospectDate || c.history[0].date, c.saleDate);
+    const row = document.createElement('div');
+    row.className='client-row';
+    row.innerHTML = `
+      <div style="min-width:150px;">
+        <h4>${escapeHtml(c.name)}</h4>
+        <div class="meta">Cliente desde ${fmtShort(c.saleDate)} · $${(c.saleAmount||0).toLocaleString('es-MX')}</div>
+        <div class="meta">Prospectado ${fmtShort(c.prospectDate || c.history[0].date)} · ${daysToClose} día${daysToClose===1?'':'s'} a la venta</div>
+        ${c.phone?`<div class="meta">${telLink(c.phone)}</div>`:''}
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div style="width:${pct}%"></div></div>
+        <div class="progress-label">${done} / ${total} actividades completadas</div>
+      </div>
+      ${next ? `<div class="next-pill">Próximo: ${escapeHtml(next.title)} · ${fmtShort(next.date)}</div>` : '<div class="next-pill">Plan completado 🎉</div>'}
+      <button class="btn btn-sm btn-ghost" onclick="scheduleClientYearToGoogleCalendar('${c.id}')" title="Abre una lista de enlaces para agendar cada actividad del año en Google Calendar">
+        Agendar año en Google Calendar
+      </button>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+/* ============================================================
+   DIRECCIONES POR COLONIA
+   ============================================================ */
+function renderAddressGroups(){
+  const wrap = document.getElementById('addressGroups');
+  // solo contactos con al menos dirección o colonia capturada
+  const withAddr = DATA.prospects.filter(p => (p.address && p.address.trim()) || (p.colonia && p.colonia.trim()));
+  wrap.innerHTML='';
+  if(withAddr.length===0){
+    wrap.innerHTML = '<div class="empty-col" style="padding:40px;">Aún no tienes direcciones capturadas. Agrégalas al crear o editar un prospecto (campos "Dirección" y "Colonia").</div>';
+    return;
+  }
+  const groups = {};
+  withAddr.forEach(p=>{
+    const key = (p.colonia && p.colonia.trim()) || 'Sin colonia';
+    if(!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  });
+  const sortedKeys = Object.keys(groups).sort((a,b)=>{
+    if(a==='Sin colonia') return 1;
+    if(b==='Sin colonia') return -1;
+    return a.localeCompare(b, 'es');
+  });
+  sortedKeys.forEach(key=>{
+    const items = groups[key].sort((a,b)=>a.name.localeCompare(b.name,'es'));
+    const groupEl = document.createElement('div');
+    groupEl.className='addr-group';
+    let html = `<div class="addr-group-title"><h3>${escapeHtml(key)}</h3><span class="addr-group-count mono">${items.length}</span></div>`;
+    items.forEach(p=>{
+      const stageLabel = p.stage==='venta' ? 'Cliente' : (p.stage==='no_interesado' ? 'No interesado' : (p.stage==='no_venta' ? 'No venta' : (STAGE_LABEL[p.stage]||p.stage)));
+      const tagClass = p.stage==='venta' ? 'tag-sage' : (p.stage==='no_interesado'||p.stage==='no_venta' ? 'tag-rose' : 'tag-neutral');
+      html += `<div class="addr-card">
+        <div>
+          <h4>${escapeHtml(p.name)} <span class="tag ${tagClass}" style="margin-left:4px;">${stageLabel}</span></h4>
+          <div class="addr-line">${escapeHtml(p.address||'Sin calle capturada')}</div>
+          ${p.phone?`<div class="addr-line">${telLink(p.phone)}</div>`:''}
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="openEditProspect('${p.id}')">Editar</button>
+      </div>`;
+    });
+    groupEl.innerHTML = html;
+    wrap.appendChild(groupEl);
+  });
+}
+
+/* ============================================================
+   RECLUTAMIENTO
+   ============================================================ */
+const RECRUIT_COLUMNS = [
+  {key:'interesado', label:'Interesado'},
+  {key:'platica', label:'Plática informativa'},
+  {key:'entrevista', label:'Entrevista'},
+  {key:'reclutado', label:'Reclutado'},
+  {key:'descartado', label:'No reclutado'},
+];
+
+function getRecruit(id){ return DATA.recruits.find(r=>r.id===id); }
+
+function addRecruit(name, phone, notes){
+  const r = {
+    id:'r'+DATA.nextRecruitId++,
+    name, phone, notes: notes||'',
+    stage:'interesado',
+    history:[{date: toISODate(new Date()), note:'Candidato agregado'}]
+  };
+  DATA.recruits.push(r);
+  logEvent('recluta_nuevo', name);
+  saveData(); renderAll();
+  toast('Candidato agregado');
+}
+
+function moveRecruitStage(id, newStage, reason){
+  const r = getRecruit(id);
+  if(!r) return;
+  r.stage = newStage;
+  const labels = {platica:'Pasó a plática informativa', entrevista:'Pasó a entrevista', reclutado:'¡Reclutado!', descartado:'No reclutado'+(reason?': '+reason:'')};
+  r.history.push({date: toISODate(new Date()), note: labels[newStage] || newStage});
+  if(newStage==='reclutado') logEvent('reclutado', r.name);
+  saveData(); renderAll();
+}
+
+function renderRecruitBoard(){
+  const board = document.getElementById('recruitBoard');
+  if(!board) return;
+  board.innerHTML='';
+  RECRUIT_COLUMNS.forEach((col,i)=>{
+    const items = DATA.recruits.filter(r=>r.stage===col.key);
+    const colEl = document.createElement('div');
+    colEl.className='col';
+    colEl.innerHTML = `<div class="col-head">
+        <span class="col-num mono">0${i+1}</span>
+        <span class="col-title">${col.label}</span>
+        <span class="col-count mono">${items.length}</span>
+      </div>`;
+    if(items.length===0){
+      const e = document.createElement('div');
+      e.className='empty-col';
+      e.textContent='Sin candidatos aquí';
+      colEl.appendChild(e);
+    }
+    items.forEach(r=> colEl.appendChild(renderRecruitCard(r)));
+    board.appendChild(colEl);
+  });
+}
+
+function renderRecruitCard(r){
+  const card = document.createElement('div');
+  card.className='card';
+  card.innerHTML = `
+    <h4>${escapeHtml(r.name)}</h4>
+    <div class="meta">${r.phone? telLink(r.phone) : 'Sin teléfono'}</div>
+    ${r.notes?`<div class="notes">${escapeHtml(r.notes)}</div>`:''}
+    <div class="card-actions" id="ractions-${r.id}"></div>
+  `;
+  const actions = card.querySelector('.card-actions');
+  if(r.stage==='interesado'){
+    actions.appendChild(makeBtn('Plática informativa','btn-primary',()=>moveRecruitStage(r.id,'platica')));
+    actions.appendChild(makeBtn('Descartar','btn-rose',()=>moveRecruitStage(r.id,'descartado')));
+  } else if(r.stage==='platica'){
+    actions.appendChild(makeBtn('Entrevista','btn-primary',()=>moveRecruitStage(r.id,'entrevista')));
+    actions.appendChild(makeBtn('Descartar','btn-rose',()=>moveRecruitStage(r.id,'descartado')));
+  } else if(r.stage==='entrevista'){
+    actions.appendChild(makeBtn('Reclutado','btn-sage',()=>moveRecruitStage(r.id,'reclutado')));
+    actions.appendChild(makeBtn('No reclutado','btn-rose',()=>moveRecruitStage(r.id,'descartado')));
+  } else if(r.stage==='reclutado'){
+    const tag=document.createElement('span'); tag.className='tag tag-sage'; tag.textContent='En el equipo';
+    actions.appendChild(tag);
+  } else {
+    actions.appendChild(makeBtn('Reactivar','btn-ghost',()=>moveRecruitStage(r.id,'interesado')));
+  }
+  return card;
+}
+
+function openAddRecruit(prefill){
+  prefill = prefill || {};
+  showModal(`
+    <h3>Nuevo candidato</h3>
+    <div class="sub">${prefill.fromIndeed? 'Revisa los datos importados de Indeed antes de agregarlo.' : 'Se agrega a la etapa de "Interesado".'}</div>
+    <div class="field"><label>Nombre</label><input id="nrName" placeholder="Nombre del candidato" value="${escapeAttr(prefill.name||'')}"></div>
+    <div class="field"><label>Teléfono</label><input id="nrPhone" placeholder="Opcional" value="${escapeAttr(prefill.phone||'')}"></div>
+    <div class="field"><label>Notas</label><textarea id="nrNotes" placeholder="Cómo lo conociste, contexto, etc.">${escapeHtml(prefill.notes||'')}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitAddRecruit()">Agregar</button>
+    </div>
+  `);
+  if(!prefill.name){
+    setTimeout(()=>document.getElementById('nrName').focus(),50);
+  }
+}
+function submitAddRecruit(){
+  const name = document.getElementById('nrName').value.trim();
+  if(!name){ toast('Ponle un nombre al candidato'); return; }
+  const phone = document.getElementById('nrPhone').value.trim();
+  const notes = document.getElementById('nrNotes').value.trim();
+  addRecruit(name, phone, notes);
+  closeModal();
+}
+
+/* ---------- Importar candidato de Indeed ----------
+   Indeed no permite conectar directamente cuentas de reclutador para jalar candidatos,
+   así que pegas aquí el texto del perfil/mensaje de Indeed y la IA saca los datos. */
+function openImportIndeed(){
+  showModal(`
+    <h3>Importar de Indeed</h3>
+    <div class="sub">Copia el texto del perfil o mensaje del candidato desde la app o el sitio de Indeed, y pégalo aquí. No es posible conectar la cuenta de Indeed directamente, pero esto hace el mismo trabajo en un paso.</div>
+    <div class="field"><textarea id="indeedPaste" style="min-height:140px;" placeholder="Pega aquí el texto copiado de Indeed (nombre, teléfono, experiencia, mensaje, etc.)"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="indeedExtractBtn" onclick="extractIndeedText()">Extraer datos</button>
+    </div>
+  `);
+  setTimeout(()=>document.getElementById('indeedPaste').focus(),50);
+}
+async function extractIndeedText(){
+  const raw = document.getElementById('indeedPaste').value.trim();
+  if(!raw){ toast('Pega el texto del candidato primero'); return; }
+  const btn = document.getElementById('indeedExtractBtn');
+  btn.disabled = true; btn.textContent = 'Leyendo…';
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 400,
+        messages: [{
+          role: "user",
+          content: `Este es un texto copiado de un perfil o mensaje de un candidato en Indeed, para reclutamiento de un equipo de venta directa de Royal Prestige:\n\n"""${raw}"""\n\nExtrae: nombre completo, teléfono (si aparece), y un resumen breve como nota (experiencia relevante o por qué podría interesar). Responde ÚNICAMENTE con JSON válido, sin texto extra ni markdown, en este formato exacto: {"nombre":"","telefono":"","notas":""}. Si un dato no aparece, deja el valor como cadena vacía "".`
+        }]
+      })
+    });
+    const json = await response.json();
+    const textBlock = (json.content||[]).find(b=>b.type==='text');
+    if(!textBlock){ toast('No se pudo leer el texto, intenta de nuevo'); btn.disabled=false; btn.textContent='Extraer datos'; return; }
+    const cleaned = textBlock.text.replace(/```json|```/g,'').trim();
+    const extracted = JSON.parse(cleaned);
+    openAddRecruit({
+      name: extracted.nombre || '',
+      phone: extracted.telefono || '',
+      notes: extracted.notas || '',
+      fromIndeed: true
+    });
+    if(!extracted.nombre) toast('No se identificó bien el nombre, revísalo antes de guardar');
+  }catch(e){
+    console.error(e);
+    toast('Hubo un error leyendo el texto. Intenta de nuevo o agrégalo a mano.');
+    btn.disabled = false; btn.textContent = 'Extraer datos';
+  }
+}
+
+/* ============================================================
+   CALENDARIO
+   ============================================================ */
+let calCursor = new Date(); calCursor.setDate(1);
+let selectedDate = toISODate(new Date());
+
+function allActivities(){
+  // devuelve todas las actividades de todos los clientes, con referencia al cliente
+  const acts = [];
+  DATA.prospects.filter(p=>p.stage==='venta').forEach(c=>{
+    c.plan.forEach(a=> acts.push({...a, clientId:c.id, clientName:c.name}));
+  });
+  return acts;
+}
+
+function calShift(n){
+  calCursor.setMonth(calCursor.getMonth()+n);
+  renderCalendar();
+}
+
+function renderCalendar(){
+  const label = calCursor.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
+  document.getElementById('calMonthLabel').textContent = label;
+
+  const acts = allActivities();
+  const actsByDate = {};
+  acts.forEach(a=>{ (actsByDate[a.date] = actsByDate[a.date]||[]).push(a); });
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML='';
+  ['Lu','Ma','Mi','Ju','Vi','Sá','Do'].forEach(d=>{
+    const el = document.createElement('div'); el.className='cal-dow'; el.textContent=d; grid.appendChild(el);
+  });
+
+  const year = calCursor.getFullYear(), month = calCursor.getMonth();
+  const firstDay = new Date(year, month, 1);
+  let startOffset = (firstDay.getDay()+6)%7; // lunes=0
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  const todayISO = toISODate(new Date());
+
+  const cells = [];
+  for(let i=startOffset;i>0;i--) cells.push({d:daysInPrevMonth-i+1, inMonth:false, dateStr:null});
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = year+'-'+pad(month+1)+'-'+pad(d);
+    cells.push({d, inMonth:true, dateStr});
+  }
+  while(cells.length%7!==0) cells.push({d:cells.length, inMonth:false, dateStr:null});
+
+  cells.forEach(c=>{
+    const el = document.createElement('button');
+    el.className='cal-day'+(c.inMonth?' in-month':'')+(c.dateStr===todayISO?' today':'')+(c.dateStr===selectedDate?' selected':'')+((c.dateStr && actsByDate[c.dateStr])?' has-events':'');
+    el.textContent = c.d;
+    if(c.dateStr){
+      el.onclick = ()=>{ selectedDate = c.dateStr; renderCalendar(); };
+    } else {
+      el.disabled = true; el.style.opacity=0.3;
+    }
+    grid.appendChild(el);
+  });
+
+  renderDayPanel(actsByDate);
+}
+
+function renderDayPanel(actsByDate){
+  const list = actsByDate[selectedDate] || [];
+  document.getElementById('dayPanelTitle').textContent = selectedDate===toISODate(new Date()) ? 'Hoy' : fmtShort(selectedDate);
+  document.getElementById('dayPanelSub').textContent = fmtLong(selectedDate);
+  const wrap = document.getElementById('dayPanelList');
+  wrap.innerHTML='';
+  if(list.length===0){
+    wrap.innerHTML = '<div class="no-events">No hay actividades programadas este día.</div>';
+    return;
+  }
+  list.sort((a,b)=> a.clientName.localeCompare(b.clientName));
+  list.forEach(a=>{
+    const item = document.createElement('div');
+    item.className='agenda-item'+(a.done?' done':'');
+    const c = getProspect(a.clientId);
+    item.innerHTML = `
+      <div class="who">${escapeHtml(a.clientName)}</div>
+      <h5>${escapeHtml(a.title)}</h5>
+      <p>${escapeHtml(a.desc)}</p>
+      <div class="agenda-actions">
+        <a class="btn btn-sm btn-primary" href="${gcalUrlFor(a, a.clientName, c?c.phone:'')}" target="_blank" rel="noopener" onclick="setTimeout(()=>toast('Si no se abrió, tu navegador bloqueó la pestaña: permite pop-ups para este sitio'),400)">
+          Agendar en Google Calendar
+        </a>
+        <button class="btn btn-sm btn-ghost" onclick="toggleDone('${a.clientId}','${a.id}')">
+          ${a.done? 'Marcar pendiente' : 'Marcar hecho'}
+        </button>
+      </div>
+    `;
+    wrap.appendChild(item);
+  });
+}
+
+function toggleDone(clientId, actId){
+  const c = getProspect(clientId);
+  if(!c) return;
+  const a = c.plan.find(x=>x.id===actId);
+  if(!a) return;
+  a.done = !a.done;
+  saveData(); renderAll();
+}
+
+/* ---------- Google Calendar: un clic ---------- */
+function gcalUrlFor(a, clientName, clientPhone){
+  const dateCompact = a.date.replace(/-/g,'');
+  const nextDay = addDays(a.date,1).replace(/-/g,'');
+  const text = encodeURIComponent(`${a.title} — ${clientName}`);
+  const details = encodeURIComponent(`${a.desc}\n\nCliente: ${clientName}${clientPhone? ' · '+clientPhone:''}\n(Generado desde el CRM de seguimiento Royal Prestige)`);
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dateCompact}/${nextDay}&details=${details}`;
+}
+
+function addToGoogleCalendar(clientId, actId){
+  const c = getProspect(clientId);
+  const a = c.plan.find(x=>x.id===actId);
+  if(!a) return;
+  window.open(gcalUrlFor(a, c.name, c.phone), '_blank');
+}
+
+/* ---------- Agendar TODO el mes visible en Google Calendar: lista de enlaces reales ----------
+   (usamos <a target="_blank"> en vez de window.open() porque los navegadores bloquean las
+   ventanas abiertas por código, pero nunca bloquean un enlace normal que el usuario da clic) */
+function scheduleMonthToGoogleCalendar(){
+  const year = calCursor.getFullYear(), month = calCursor.getMonth();
+  const pending = allActivities().filter(a=>{
+    if(a.done) return false;
+    const d = fromISODate(a.date);
+    return d.getFullYear()===year && d.getMonth()===month;
+  });
+  const monthLabel = calCursor.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
+  if(pending.length===0){ toast('No hay actividades pendientes ese mes'); return; }
+  pending.sort((a,b)=> a.date.localeCompare(b.date));
+  const linksHtml = pending.map(a=>{
+    const c = getProspect(a.clientId);
+    return `<a class="gcal-link" href="${gcalUrlFor(a, a.clientName, c?c.phone:'')}" target="_blank" rel="noopener">
+      <span class="gcal-link-date mono">${fmtShort(a.date)}</span>
+      <span class="gcal-link-title">${escapeHtml(a.title)} — ${escapeHtml(a.clientName)}</span>
+      <span class="gcal-link-go">Abrir ›</span>
+    </a>`;
+  }).join('');
+  showModal(`
+    <h3 style="text-transform:capitalize;">Agendar ${monthLabel}</h3>
+    <div class="sub">Da clic en cada actividad — se abre Google Calendar ya prellenado, solo le das Guardar. Son ${pending.length} actividad(es).</div>
+    <div class="gcal-link-list">${linksHtml}</div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Listo</button></div>
+  `);
+}
+
+/* ---------- Exportar .ics del mes visible ---------- */
+/* ---------- descarga de archivos: con respaldo por si el navegador bloquea el método normal ---------- */
+function downloadFile(filename, content, mimeType){
+  // El entorno donde corre esta app bloquea abrir/descargar archivos generados dentro de ella
+  // (blob, data URI, ventanas nuevas), así que damos dos formas de guardarlo que sí funcionan.
+  showModal(`
+    <h3>Guardar "${escapeHtml(filename)}"</h3>
+    <div class="sub">Ya seleccionamos todo el texto. Presiona <strong>Ctrl+C</strong> (en celular: mantén presionado sobre el texto y elige "Copiar") y pégalo en una nota o archivo de texto nuevo, guardándolo con este nombre exacto (incluyendo la extensión).</div>
+    <textarea id="backupTextarea" style="width:100%;height:220px;font-family:'IBM Plex Mono',monospace;font-size:11px;" readonly>${escapeHtml(content)}</textarea>
+    <div class="modal-actions" style="justify-content:space-between;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="printBackupText('${escapeAttr(filename)}')">Imprimir / Guardar como PDF</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+        <button class="btn btn-primary" onclick="copyBackupText()">Copiar</button>
+      </div>
+    </div>
+  `);
+  setTimeout(()=>{
+    const ta = document.getElementById('backupTextarea');
+    if(ta){ ta.focus(); ta.select(); }
+  }, 80);
+}
+async function copyBackupText(){
+  const ta = document.getElementById('backupTextarea');
+  ta.focus(); ta.select();
+  try{
+    await navigator.clipboard.writeText(ta.value);
+    toast('Copiado — ahora pégalo en un archivo de texto y guárdalo');
+  }catch(e){
+    try{
+      document.execCommand('copy');
+      toast('Copiado — ahora pégalo en un archivo de texto y guárdalo');
+    }catch(e2){
+      toast('No se pudo copiar solo — selecciona el texto y presiona Ctrl+C');
+    }
+  }
+}
+function printBackupText(filename){
+  // Imprimimos la MISMA ventana (no abrimos ninguna nueva) para evitar el bloqueo de pestañas.
+  const ta = document.getElementById('backupTextarea');
+  const printArea = document.getElementById('printArea');
+  printArea.textContent = filename + '\n' + '='.repeat(filename.length) + '\n\n' + ta.value;
+  window.print();
+}
+
+function exportMonthIcs(){
+  const acts = allActivities();
+  const year = calCursor.getFullYear(), month = calCursor.getMonth();
+  const inMonth = acts.filter(a=>{
+    const d = fromISODate(a.date);
+    return d.getFullYear()===year && d.getMonth()===month;
+  });
+  if(inMonth.length===0){ toast('No hay actividades ese mes'); return; }
+
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Seguimiento Royal Prestige//ES\r\n';
+  inMonth.forEach(a=>{
+    const dt = a.date.replace(/-/g,'');
+    const dtEnd = addDays(a.date,1).replace(/-/g,'');
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += 'UID:'+a.clientId+'-'+a.id+'@seguimiento-rp\r\n';
+    ics += 'DTSTART;VALUE=DATE:'+dt+'\r\n';
+    ics += 'DTEND;VALUE=DATE:'+dtEnd+'\r\n';
+    ics += 'SUMMARY:'+icsEscape(a.title+' — '+a.clientName)+'\r\n';
+    ics += 'DESCRIPTION:'+icsEscape(a.desc)+'\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  ics += 'END:VCALENDAR\r\n';
+
+  downloadFile('seguimiento-'+year+'-'+pad(month+1)+'.ics', ics, 'text/calendar');
+}
+function icsEscape(s){ return String(s).replace(/([,;])/g,'\\$1').replace(/\n/g,'\\n'); }
+
+/* ---------- Exportar TODO el año de un cliente de un jalón ---------- */
+function exportClientYearIcs(clientId){
+  const c = getProspect(clientId);
+  if(!c || !c.plan || c.plan.length===0){ toast('Este cliente no tiene plan de seguimiento'); return; }
+
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Seguimiento Royal Prestige//ES\r\n';
+  c.plan.forEach(a=>{
+    const dt = a.date.replace(/-/g,'');
+    const dtEnd = addDays(a.date,1).replace(/-/g,'');
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += 'UID:'+c.id+'-'+a.id+'@seguimiento-rp\r\n';
+    ics += 'DTSTART;VALUE=DATE:'+dt+'\r\n';
+    ics += 'DTEND;VALUE=DATE:'+dtEnd+'\r\n';
+    ics += 'SUMMARY:'+icsEscape(a.title+' — '+c.name)+'\r\n';
+    ics += 'DESCRIPTION:'+icsEscape(a.desc)+'\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  ics += 'END:VCALENDAR\r\n';
+
+  downloadFile('seguimiento-'+c.name.replace(/\s+/g,'-').toLowerCase()+'-1-año.ics', ics, 'text/calendar');
+}
+
+/* ---------- Agendar el año completo de un cliente: lista de enlaces reales ---------- */
+function scheduleClientYearToGoogleCalendar(clientId){
+  const c = getProspect(clientId);
+  if(!c || !c.plan || c.plan.length===0){ toast('Este cliente no tiene plan de seguimiento'); return; }
+  const pending = c.plan.filter(a=>!a.done).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  if(pending.length===0){ toast('Ya completaste todas las actividades de este cliente'); return; }
+  const linksHtml = pending.map(a=>`<a class="gcal-link" href="${gcalUrlFor(a, c.name, c.phone)}" target="_blank" rel="noopener">
+      <span class="gcal-link-date mono">${fmtShort(a.date)}</span>
+      <span class="gcal-link-title">${escapeHtml(a.title)}</span>
+      <span class="gcal-link-go">Abrir ›</span>
+    </a>`).join('');
+  showModal(`
+    <h3>Agendar el año de ${escapeHtml(c.name)}</h3>
+    <div class="sub">Da clic en cada actividad para abrirla en Google Calendar y guardarla. Son ${pending.length} actividades.</div>
+    <div class="gcal-link-list">${linksHtml}</div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Listo</button></div>
+  `);
+}
+
+/* ============================================================
+   REPORTE SEMANAL
+   ============================================================ */
+let reportWeekOffset = 0; // 0 = semana actual, -1 = semana pasada, etc.
+
+function getWeekRange(offset){
+  const now = new Date();
+  const day = (now.getDay()+6)%7; // lunes=0
+  const monday = new Date(now); monday.setDate(now.getDate()-day+ (offset*7));
+  const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+  return {start: toISODate(monday), end: toISODate(sunday)};
+}
+function countEvents(type, start, end){
+  return DATA.events.filter(e=> e.type===type && e.date>=start && e.date<=end).length;
+}
+function sumSaleAmount(start,end){
+  return DATA.events.filter(e=> e.type==='venta' && e.date>=start && e.date<=end)
+    .reduce((s,e)=> s + (e.amount||0), 0);
+}
+function noSaleReasons(start,end){
+  return DATA.events.filter(e=> e.type==='no_venta' && e.date>=start && e.date<=end && e.reason)
+    .map(e=>e.reason);
+}
+
+function shiftReportWeek(n){ reportWeekOffset += n; renderReportView(); maybeAutoGenerateReport(); }
+
+/* Genera el análisis de IA solo si esa semana todavía no tiene uno guardado y hay
+   algo de actividad que analizar — así el reporte "aparece solo" cada semana sin
+   que tengas que acordarte de darle clic, pero sin gastar llamadas de más. */
+function maybeAutoGenerateReport(){
+  const cur = getWeekRange(reportWeekOffset);
+  if(DATA.reports[cur.start]) return; // ya existe, no lo regeneramos solo
+  const hasActivity = DATA.events.some(e=> e.date>=cur.start && e.date<=cur.end)
+    || DATA.prospects.length>0;
+  if(!hasActivity) return;
+  generateAIReport();
+}
+
+function fmtMoney(n){ return '$'+Math.round(n).toLocaleString('es-MX'); }
+
+/* ---------- Lista detallada al tocar una tarjeta de métrica (ventas, citas, etc.) ---------- */
+function showMetricList(type, label){
+  const cur = getWeekRange(reportWeekOffset);
+  const items = DATA.events
+    .filter(e=> e.type===type && e.date>=cur.start && e.date<=cur.end)
+    .sort((a,b)=> a.date.localeCompare(b.date));
+
+  if(items.length===0){
+    showModal(`
+      <h3>${escapeHtml(label)}</h3>
+      <div class="sub">Semana del ${fmtShort(cur.start)} al ${fmtShort(cur.end)}</div>
+      <div class="no-events">Nada en esta categoría todavía esta semana.</div>
+      <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div>
+    `);
+    return;
+  }
+
+  const rowsHtml = items.map(ev=>{
+    const p = ev.id ? getProspect(ev.id) : null;
+    let extraLine = '';
+    if(type==='venta') extraLine = fmtMoney(ev.amount||0);
+    if(type==='no_venta' && ev.reason) extraLine = escapeHtml(ev.reason);
+    return `<div class="agenda-item">
+      <div class="who">${fmtShort(ev.date)}</div>
+      <h5>${escapeHtml(ev.name)}</h5>
+      ${extraLine?`<p>${extraLine}</p>`:''}
+      ${p?.phone?`<p>${telLink(p.phone)}</p>`:''}
+      ${p?`<div class="agenda-actions"><button class="btn btn-sm btn-ghost" onclick="closeModal(); openEditProspect('${p.id}');">Ver / editar</button></div>`:''}
+    </div>`;
+  }).join('');
+
+  showModal(`
+    <h3>${escapeHtml(label)}</h3>
+    <div class="sub">Semana del ${fmtShort(cur.start)} al ${fmtShort(cur.end)} · ${items.length} en total</div>
+    <div style="max-height:400px;overflow-y:auto;">${rowsHtml}</div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div>
+  `);
+}
+
+function avgDaysToClose(){
+  const clients = DATA.prospects.filter(p=>p.stage==='venta' && (p.prospectDate || p.history[0]));
+  if(clients.length===0) return null;
+  const totalDays = clients.reduce((sum,c)=> sum + daysBetween(c.prospectDate || c.history[0].date, c.saleDate), 0);
+  return Math.round(totalDays / clients.length);
+}
+
+function renderReportView(){
+  const cur = getWeekRange(reportWeekOffset);
+  const prev = getWeekRange(reportWeekOffset-1);
+
+  document.getElementById('reportWeekLabel').textContent = `Semana del ${fmtShort(cur.start)} al ${fmtShort(cur.end)}`;
+
+  const metrics = [
+    {key:'nuevo', label:'Prospectos nuevos'},
+    {key:'contacto', label:'Contactados'},
+    {key:'cita', label:'Citas agendadas'},
+    {key:'demo', label:'Demos realizadas'},
+    {key:'venta', label:'Ventas cerradas'},
+    {key:'no_venta', label:'No venta'},
+    {key:'no_realizada', label:'Citas no realizadas'},
+  ];
+  const grid = document.getElementById('reportMetrics');
+  grid.innerHTML='';
+  metrics.forEach(m=>{
+    const curVal = countEvents(m.key, cur.start, cur.end);
+    const prevVal = countEvents(m.key, prev.start, prev.end);
+    const diff = curVal - prevVal;
+    const deltaClass = diff>0?'up':(diff<0?'down':'flat');
+    const deltaTxt = diff>0? `▲ ${diff}` : (diff<0? `▼ ${Math.abs(diff)}` : '— igual');
+    const card = document.createElement('div');
+    card.className='metric-card metric-clickable';
+    card.innerHTML = `<div class="num">${curVal}</div><div class="lbl">${m.label}</div><span class="delta ${deltaClass}">${deltaTxt} vs. semana pasada</span>`;
+    card.onclick = ()=>showMetricList(m.key, m.label);
+    grid.appendChild(card);
+  });
+  const curMoney = sumSaleAmount(cur.start,cur.end);
+  const prevMoney = sumSaleAmount(prev.start,prev.end);
+  const diffMoney = curMoney - prevMoney;
+  const deltaClassM = diffMoney>0?'up':(diffMoney<0?'down':'flat');
+  const moneyCard = document.createElement('div');
+  moneyCard.className='metric-card metric-clickable';
+  moneyCard.innerHTML = `<div class="num">${fmtMoney(curMoney)}</div><div class="lbl">Monto vendido</div><span class="delta ${deltaClassM}">${diffMoney>=0?'▲':'▼'} ${fmtMoney(Math.abs(diffMoney))} vs. semana pasada</span>`;
+  moneyCard.onclick = ()=>showMetricList('venta','Ventas cerradas');
+  grid.appendChild(moneyCard);
+
+  const avgDays = avgDaysToClose();
+  const avgCard = document.createElement('div');
+  avgCard.className='metric-card';
+  avgCard.innerHTML = `<div class="num">${avgDays!==null? avgDays : '—'}</div><div class="lbl">Días promedio: prospección → venta</div>`;
+  grid.appendChild(avgCard);
+
+  renderFunnelChart();
+  renderWeekCompareChart(cur, prev, metrics);
+
+  const cached = DATA.reports[cur.start];
+  const box = document.getElementById('aiReportBox');
+  box.classList.remove('loading');
+  box.textContent = cached ? cached.text : '';
+}
+
+function renderFunnelChart(){
+  const milestoneReached = (p, note)=> p.history.some(h=>h.note.includes(note));
+  const totalProspectos = DATA.prospects.length;
+  const totalContacto = DATA.prospects.filter(p=>milestoneReached(p,'Pasó a contacto')).length;
+  const totalCita = DATA.prospects.filter(p=>milestoneReached(p,'Cita agendada')).length;
+  const totalDemo = DATA.prospects.filter(p=>milestoneReached(p,'Demo realizada')).length;
+  const totalVenta = DATA.prospects.filter(p=>p.stage==='venta').length;
+  const steps = [
+    {label:'Prospecto', val:totalProspectos},
+    {label:'Contacto', val:totalContacto},
+    {label:'Cita', val:totalCita},
+    {label:'Demo', val:totalDemo},
+    {label:'Venta', val:totalVenta},
+  ];
+  const max = Math.max(1, steps[0].val);
+  const wrap = document.getElementById('funnelChart');
+  wrap.innerHTML='';
+  steps.forEach(s=>{
+    const row = document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML = `<span class="bar-label">${s.label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${max? (s.val/max*100):0}%"></div></div>
+      <span class="bar-val">${s.val}</span>`;
+    wrap.appendChild(row);
+  });
+  window._lastFunnel = steps;
+}
+
+function renderWeekCompareChart(cur, prev, metrics){
+  const wrap = document.getElementById('weekCompareChart');
+  wrap.innerHTML='';
+  const maxVal = Math.max(1, ...metrics.map(m=> Math.max(countEvents(m.key,cur.start,cur.end), countEvents(m.key,prev.start,prev.end))));
+  metrics.forEach(m=>{
+    const curVal = countEvents(m.key, cur.start, cur.end);
+    const prevVal = countEvents(m.key, prev.start, prev.end);
+    const row = document.createElement('div');
+    row.className='compare-row';
+    row.innerHTML = `
+      <span class="compare-label">${m.label}</span>
+      <div class="compare-bars">
+        <div class="compare-bar-line">
+          <span class="tag-mini">Esta sem.</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${curVal/maxVal*100}%"></div></div>
+          <span class="bar-val mono">${curVal}</span>
+        </div>
+        <div class="compare-bar-line prev">
+          <span class="tag-mini">Anterior</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${prevVal/maxVal*100}%"></div></div>
+          <span class="bar-val mono">${prevVal}</span>
+        </div>
+      </div>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+async function generateAIReport(){
+  const cur = getWeekRange(reportWeekOffset);
+  const prev = getWeekRange(reportWeekOffset-1);
+  const box = document.getElementById('aiReportBox');
+  const btn = document.getElementById('genReportBtn');
+  box.classList.add('loading'); box.textContent=''; btn.disabled = true; btn.textContent='Analizando…';
+
+  const data = {
+    semana: `${cur.start} a ${cur.end}`,
+    prospectos_nuevos: countEvents('nuevo',cur.start,cur.end),
+    contactados: countEvents('contacto',cur.start,cur.end),
+    citas: countEvents('cita',cur.start,cur.end),
+    demos: countEvents('demo',cur.start,cur.end),
+    ventas: countEvents('venta',cur.start,cur.end),
+    no_ventas: countEvents('no_venta',cur.start,cur.end),
+    monto_vendido: sumSaleAmount(cur.start,cur.end),
+    semana_anterior: {
+      prospectos_nuevos: countEvents('nuevo',prev.start,prev.end),
+      contactados: countEvents('contacto',prev.start,prev.end),
+      citas: countEvents('cita',prev.start,prev.end),
+      demos: countEvents('demo',prev.start,prev.end),
+      ventas: countEvents('venta',prev.start,prev.end),
+      monto_vendido: sumSaleAmount(prev.start,prev.end),
+    },
+    embudo_acumulado: window._lastFunnel,
+    motivos_no_venta_esta_semana: noSaleReasons(cur.start,cur.end),
+    clientes_activos_en_seguimiento: DATA.prospects.filter(p=>p.stage==='venta').length,
+    dias_promedio_prospeccion_a_venta: avgDaysToClose(),
+  };
+
+  const prompt = `Actúa como un gerente/líder de ventas con más de 20 años de experiencia: organizado, directo y orientado a resultados. Te paso los números de la semana de un vendedor de Royal Prestige (cocinas, utensilios de cocina por venta directa) en formato JSON:
+
+${JSON.stringify(data, null, 2)}
+
+Escribe un reporte breve en español, en texto plano (sin markdown, sin asteriscos), con estas secciones separadas por saltos de línea y encabezados en mayúsculas:
+RESUMEN — 2-3 líneas sobre cómo estuvo la semana.
+TASAS DE CONVERSIÓN — calcula y comenta contacto/prospecto, cita/contacto, demo/cita, venta/demo del embudo acumulado.
+CICLO DE VENTA — comenta el promedio de días de prospección a venta y si es rápido o lento para este tipo de producto.
+CUELLO DE BOTELLA — en qué etapa se está perdiendo más gente y por qué probablemente.
+COMPARACIÓN — cómo va esta semana contra la anterior, en números y en tendencia.
+RECOMENDACIONES — 3 a 4 acciones concretas y directas para la próxima semana, como se las daría un gerente de ventas exigente pero justo.
+
+Sé concreto, usa los números reales que te di, y no inventes datos que no están en el JSON.`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{role:"user", content: prompt}]
+      })
+    });
+    const json = await response.json();
+    const text = (json.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    box.classList.remove('loading');
+    box.textContent = text || 'No se pudo generar el análisis, intenta de nuevo.';
+    if(text){
+      DATA.reports[cur.start] = {text, generatedAt: toISODate(new Date())};
+      saveData();
+    }
+  }catch(e){
+    console.error(e);
+    box.classList.remove('loading');
+    box.textContent = 'Hubo un error generando el análisis. Intenta de nuevo en un momento.';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Generar análisis';
+  }
+}
+
+/* ============================================================
+   FOTO DE ENCUESTA → PROSPECTO (visión con IA)
+   ============================================================ */
+function handleSurveyPhoto(event){
+  const file = event.target.files[0];
+  event.target.value = ''; // permite volver a subir la misma foto después
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async ()=>{
+    const base64 = reader.result.split(',')[1];
+    const mediaType = file.type || 'image/jpeg';
+    toast('Leyendo la foto de la encuesta…');
+    try{
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 500,
+          messages: [{
+            role: "user",
+            content: [
+              { type:"image", source:{ type:"base64", media_type: mediaType, data: base64 } },
+              { type:"text", text: "Esta es una foto de una encuesta/formulario de prospección en papel, llenado a mano en un módulo de venta directa de Royal Prestige (cocinas y utensilios de cocina). Extrae: nombre completo del prospecto, teléfono/celular, dirección (calle y número si aparece), colonia/zona, dónde lo conoció (ej. nombre de la tienda o módulo), si le gusta cocinar (si/no, según lo marcado), si le interesa cuidar su salud (si/no), antecedentes familiares de enfermedad marcados (cáncer, diabetes, hipertensión — puede haber varios o ninguno), para cuántas personas cocina, con qué utensilios cocina actualmente, y cualquier nota relevante adicional (comentarios, si un familiar ya tiene el producto, etc.). Responde ÚNICAMENTE con un JSON válido, sin texto extra, sin markdown, en este formato exacto: {\"nombre\":\"\",\"telefono\":\"\",\"direccion\":\"\",\"colonia\":\"\",\"donde_conocio\":\"\",\"le_gusta_cocinar\":\"\",\"le_interesa_salud\":\"\",\"antecedentes\":[],\"num_personas\":\"\",\"utensilios\":\"\",\"notas\":\"\"}. Para le_gusta_cocinar y le_interesa_salud usa exactamente \"si\", \"no\" o \"\" (si no está marcado/no aparece). Para antecedentes usa un arreglo con los valores exactos \"cancer\", \"diabetes\", \"hipertension\" según lo que esté marcado (arreglo vacío si no hay nada marcado). Si algún otro dato no aparece legible en la imagen, deja el valor como cadena vacía \"\"." }
+            ]
+          }]
+        })
+      });
+      const json = await response.json();
+      const textBlock = (json.content||[]).find(b=>b.type==='text');
+      if(!textBlock){ toast('No se pudo leer la foto, intenta de nuevo'); return; }
+      const cleaned = textBlock.text.replace(/```json|```/g,'').trim();
+      const extracted = JSON.parse(cleaned);
+      openAddProspect({
+        name: extracted.nombre || '',
+        phone: extracted.telefono || '',
+        address: extracted.direccion || '',
+        colonia: extracted.colonia || '',
+        notes: extracted.notas || '',
+        meetPlace: extracted.donde_conocio || '',
+        likesCooking: extracted.le_gusta_cocinar || '',
+        caresHealth: extracted.le_interesa_salud || '',
+        familyHistory: Array.isArray(extracted.antecedentes) ? extracted.antecedentes : [],
+        cookFor: extracted.num_personas || '',
+        cookware: extracted.utensilios || '',
+        fromPhoto: true
+      });
+      if(!extracted.nombre) toast('No se leyó bien el nombre, revísalo antes de guardar');
+    }catch(e){
+      console.error(e);
+      toast('Hubo un error leyendo la foto. Intenta con otra imagen o agrégalo a mano.');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============================================================
+   RESPALDO / RESTAURAR
+   ============================================================ */
+function openMoreMenu(){
+  const modules = (DATA.settings && DATA.settings.modules) || [];
+  const modulesHtml = modules.map((m,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12.5px;">
+      <span style="flex:1;">${escapeHtml(m)}</span>
+      <button class="btn btn-sm btn-rose" onclick="removeModule(${i})">Quitar</button>
+    </div>
+  `).join('') || '<div class="notes-log-empty">Sin módulos guardados.</div>';
+  showModal(`
+    <h3>Más opciones</h3>
+    <div class="sub">Sesión: <strong>${escapeHtml(currentUser||'')}</strong></div>
+    <div class="modal-actions" style="margin-top:0;margin-bottom:14px;">
+      <button class="btn btn-rose btn-sm" onclick="closeModal(); logout();">Cerrar sesión</button>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:0 0 18px;">
+    <div class="sub">Tu nombre para los mensajes de WhatsApp</div>
+    <div class="field"><input id="sellerNameInput" placeholder="Ej. Karla" value="${escapeAttr(DATA.settings?.sellerName||'')}"></div>
+    <div class="modal-actions" style="margin-top:0;">
+      <button class="btn btn-sage btn-sm" onclick="saveSellerName()">Guardar nombre</button>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:18px 0;">
+    <div class="sub">Módulos (para "¿Dónde lo conoció?")</div>
+    <div class="notes-log" style="max-height:150px;">${modulesHtml}</div>
+    <div class="field"><input id="newModuleInput" placeholder="Ej. Bodega Aurrera de la Luna"></div>
+    <div class="modal-actions" style="margin-top:0;">
+      <button class="btn btn-sage btn-sm" onclick="addModule()">Agregar módulo</button>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:18px 0;">
+    <div class="sub">Respaldo de tus datos</div>
+    <div class="modal-actions" style="justify-content:flex-start;flex-direction:column;align-items:stretch;gap:8px;">
+      <button class="btn btn-ghost" onclick="closeModal(); downloadBackup();">Descargar respaldo</button>
+      <label class="btn btn-ghost" for="restoreInput" onclick="closeModal()">Restaurar respaldo (archivo)</label>
+      <button class="btn btn-ghost" onclick="openPasteRestoreFallback()">Restaurar pegando el texto</button>
+    </div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div>
+  `);
+}
+function addModule(){
+  const val = document.getElementById('newModuleInput').value.trim();
+  if(!val){ toast('Escribe el nombre del módulo'); return; }
+  if(!DATA.settings.modules) DATA.settings.modules = [];
+  if(DATA.settings.modules.includes(val)){ toast('Ese módulo ya está en la lista'); return; }
+  DATA.settings.modules.push(val);
+  saveData();
+  toast('Módulo agregado');
+  openMoreMenu();
+}
+function removeModule(index){
+  DATA.settings.modules.splice(index,1);
+  saveData();
+  openMoreMenu();
+}
+function saveSellerName(){
+  const name = document.getElementById('sellerNameInput').value.trim();
+  DATA.settings.sellerName = name;
+  saveData();
+  toast('Nombre guardado');
+}
+function downloadBackup(){
+  const payload = {
+    app: 'seguimiento-royal-prestige',
+    exportedAt: toISODate(new Date()),
+    data: DATA
+  };
+  downloadFile('respaldo-crm-royal-prestige-'+toISODate(new Date())+'.json', JSON.stringify(payload, null, 2), 'application/json');
+}
+
+function handleRestoreFile(event){
+  const file = event.target.files[0];
+  event.target.value = '';
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let payload;
+    try{
+      // Si el respaldo se pegó alguna vez en una app de notas (iPhone, etc.), las comillas
+      // rectas suelen convertirse en comillas "inteligentes" y eso rompe el JSON. Las arreglamos.
+      const cleaned = reader.result
+        .replace(/[\u201C\u201D]/g, '"')
+        .replace(/[\u2018\u2019]/g, "'");
+      payload = JSON.parse(cleaned);
+    }catch(e){
+      console.error(e);
+      openPasteRestoreFallback();
+      return;
+    }
+    const incoming = payload && payload.data ? payload.data : payload;
+    if(!incoming || !Array.isArray(incoming.prospects)){
+      toast('Ese archivo no tiene el formato de un respaldo del CRM');
+      return;
+    }
+    window._pendingRestore = incoming;
+    window.scrollTo(0,0);
+    showModal(`
+      <h3>Restaurar respaldo</h3>
+      <div class="sub">Este archivo tiene ${incoming.prospects.length} prospecto(s)${incoming.recruits?' y '+incoming.recruits.length+' candidato(s) de reclutamiento':''}.
+      Al restaurar, esto <strong>reemplaza por completo</strong> la información que tienes ahora mismo en la app. No se puede deshacer.</div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-rose" id="confirmRestoreBtn" onclick="confirmRestore()">Sí, reemplazar mis datos</button>
+      </div>
+    `);
+  };
+  reader.readAsText(file);
+}
+
+/* Alternativa si el archivo no se pudo leer: pegar el JSON directamente */
+function openPasteRestoreFallback(){
+  showModal(`
+    <h3>No se pudo leer ese archivo</h3>
+    <div class="sub">Puede que el archivo se haya dañado al copiarlo. Como alternativa, pega aquí directamente el contenido del respaldo (el mismo texto que copiaste).</div>
+    <div class="field"><textarea id="pasteRestoreText" style="min-height:160px;font-family:'IBM Plex Mono',monospace;font-size:11px;" placeholder="Pega aquí el JSON del respaldo"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitPasteRestore()">Continuar</button>
+    </div>
+  `);
+}
+function submitPasteRestore(){
+  const raw = document.getElementById('pasteRestoreText').value.trim();
+  if(!raw){ toast('Pega el contenido del respaldo primero'); return; }
+  let payload;
+  try{
+    const cleaned = raw.replace(/[\u201C\u201D]/g,'"').replace(/[\u2018\u2019]/g,"'");
+    payload = JSON.parse(cleaned);
+  }catch(e){
+    toast('Ese texto no es un JSON válido — revisa que lo hayas copiado completo');
+    return;
+  }
+  const incoming = payload && payload.data ? payload.data : payload;
+  if(!incoming || !Array.isArray(incoming.prospects)){
+    toast('Ese texto no tiene el formato de un respaldo del CRM');
+    return;
+  }
+  window._pendingRestore = incoming;
+  showModal(`
+    <h3>Restaurar respaldo</h3>
+    <div class="sub">Este contenido tiene ${incoming.prospects.length} prospecto(s)${incoming.recruits?' y '+incoming.recruits.length+' candidato(s) de reclutamiento':''}.
+    Al restaurar, esto <strong>reemplaza por completo</strong> la información que tienes ahora mismo en la app. No se puede deshacer.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-rose" id="confirmRestoreBtn" onclick="confirmRestore()">Sí, reemplazar mis datos</button>
+    </div>
+  `);
+}
+
+async function confirmRestore(){
+  const incoming = window._pendingRestore;
+  if(!incoming){ closeModal(); return; }
+  const btn = document.getElementById('confirmRestoreBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Restaurando…'; }
+  try{
+    DATA = incoming;
+    if(!DATA.recruits) DATA.recruits = [];
+    if(!DATA.events) DATA.events = [];
+    if(!DATA.reports) DATA.reports = {};
+    if(!DATA.nextId) DATA.nextId = 1;
+    if(!DATA.nextRecruitId) DATA.nextRecruitId = 1;
+    await saveData();
+    renderAll();
+    toast('Respaldo restaurado');
+  }catch(e){
+    console.error(e);
+    toast('Hubo un error al restaurar. Intenta de nuevo.');
+  } finally {
+    window._pendingRestore = null;
+    closeModal();
+  }
+}
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(async function init(){
+  document.getElementById('loadingScreen').style.display='none';
+  let savedUser = null;
+  try{ savedUser = sessionStorage.getItem('crm-current-user'); }catch(e){}
+  if(savedUser && CREDENTIALS[savedUser]){
+    currentUser = savedUser;
+    // Si hay nube conectada, hay que esperar a que Firebase confirme la sesión
+    // segura antes de cargar datos (si no, Firestore la rechazará por permisos).
+    if(FIREBASE_READY && fsAuth){
+      await new Promise(resolve=>{
+        const unsub = fsAuth.onAuthStateChanged(user=>{ unsub(); resolve(user); });
+      });
+      if(!fsAuth.currentUser){
+        // La sesión segura expiró o no existe: regresar al login para re-autenticar.
+        currentUser = null;
+        try{ sessionStorage.removeItem('crm-current-user'); }catch(e){}
+        document.getElementById('loginScreen').style.display='flex';
+        setTimeout(()=>document.getElementById('loginUser')?.focus(),100);
+        return;
+      }
+    }
+    await startApp();
+  } else {
+    document.getElementById('loginScreen').style.display='flex';
+    setTimeout(()=>document.getElementById('loginUser')?.focus(),100);
+  }
+})();
+
+async function startApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('loadingScreen').style.display='flex';
+  await loadData();
+  document.getElementById('loadingScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  const navEquipo = document.getElementById('navEquipo');
+  if(navEquipo) navEquipo.style.display = isAdmin() ? '' : 'none';
+  renderAll();
+}
+
+/* ---------- Panel de equipo (solo administrador, en vivo vía Firestore) ---------- */
+function setTeamRangePreset(kind){
+  const today = new Date();
+  let start;
+  if(kind==='week'){
+    start = new Date(today);
+    const day = start.getDay(); // 0=domingo
+    const diff = (day===0) ? 6 : day-1; // la semana empieza en lunes
+    start.setDate(start.getDate()-diff);
+  } else {
+    start = new Date(today.getFullYear(), today.getMonth(), 1);
+  }
+  const startEl = document.getElementById('teamRangeStart');
+  const endEl = document.getElementById('teamRangeEnd');
+  if(startEl) startEl.value = toISODate(start);
+  if(endEl) endEl.value = toISODate(today);
+  renderTeamView();
+}
+
+function dateInRange(dateStr, start, end){
+  if(!dateStr) return false;
+  return dateStr >= start && dateStr <= end;
+}
+
+async function renderTeamView(){
+  const wrap = document.getElementById('teamViewWrap');
+  const analysisWrap = document.getElementById('teamAnalysisWrap');
+  if(!wrap) return;
+  if(!FIREBASE_READY){
+    wrap.innerHTML = '<div class="empty-col" style="padding:40px;">Todavía no está conectada la base de datos en la nube — en cuanto se configure Firebase, aquí vas a ver a todo el equipo en vivo.</div>';
+    return;
+  }
+
+  const startEl = document.getElementById('teamRangeStart');
+  const endEl = document.getElementById('teamRangeEnd');
+  if(startEl && !startEl.value){
+    const d = new Date();
+    startEl.value = toISODate(new Date(d.getFullYear(), d.getMonth(), 1));
+  }
+  if(endEl && !endEl.value){ endEl.value = toISODate(new Date()); }
+  const start = startEl ? startEl.value : '0000-01-01';
+  const end = endEl ? endEl.value : '9999-12-31';
+
+  wrap.innerHTML = '<div class="empty-col" style="padding:30px;">Cargando equipo…</div>';
+  if(analysisWrap) analysisWrap.innerHTML = '';
+
+  // Ayuda para configurar las Reglas de Firestore: si eres administrador,
+  // aquí queda tu UID seguro (pégalo donde dice PEGAR_AQUI_UID_ADMIN en las reglas).
+  if(isAdmin() && fsAuth && fsAuth.currentUser){
+    console.log('Tu UID de administrador (para las Reglas de Firestore):', fsAuth.currentUser.uid);
+  }
+
+  try{
+    const snap = await fsDb.collection('crm_users').get();
+    const rows = [];
+    snap.forEach(doc=>{
+      const username = doc.id.replace('crm-data-','');
+      let d;
+      try{ d = JSON.parse(doc.data().json); }catch(e){ d = null; }
+      if(!d || !Array.isArray(d.prospects)) return;
+      const prospects = d.prospects;
+
+      let captados=0, agendadas=0, realizadas=0, ventasCount=0, montoTotal=0;
+      prospects.forEach(p=>{
+        (p.history||[]).forEach(h=>{
+          if(!dateInRange(h.date, start, end)) return;
+          if(h.note==='Prospecto agregado') captados++;
+          else if(h.note==='Cita agendada') agendadas++;
+          else if(h.note==='Demo realizada') realizadas++;
+          else if(h.note && h.note.indexOf('Venta cerrada')===0){
+            ventasCount++;
+            montoTotal += (p.saleAmount||0);
+          }
+        });
+      });
+      const pctCita = captados>0 ? Math.round((agendadas/captados)*100) : 0;
+      const pctRealizada = agendadas>0 ? Math.round((realizadas/agendadas)*100) : 0;
+      const pctVenta = realizadas>0 ? Math.round((ventasCount/realizadas)*100) : 0;
+      const ticketProm = ventasCount>0 ? montoTotal/ventasCount : 0;
+
+      rows.push({username, captados, agendadas, realizadas, ventasCount, pctCita, pctRealizada, pctVenta, ticketProm, montoTotal});
+    });
+    rows.sort((a,b)=> b.montoTotal - a.montoTotal);
+    if(rows.length===0){
+      wrap.innerHTML = '<div class="empty-col" style="padding:40px;">Nadie del equipo tiene actividad registrada en este rango de fechas.</div>';
+      return;
+    }
+    wrap.innerHTML = `
+      <div style="overflow-x:auto;">
+      <table class="team-table">
+        <thead><tr>
+          <th>Vendedor</th>
+          <th>Prospectos captados</th>
+          <th>Citas agendadas</th>
+          <th>Citas realizadas</th>
+          <th>% Prospecto → Cita</th>
+          <th>% Cita → Realizada</th>
+          <th>% Realizada → Venta</th>
+          <th>Ventas</th>
+          <th>Ticket promedio</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(r=>`
+            <tr>
+              <td>${escapeHtml(r.username)}</td>
+              <td>${r.captados}</td>
+              <td>${r.agendadas}</td>
+              <td>${r.realizadas}</td>
+              <td>${r.pctCita}%</td>
+              <td>${r.pctRealizada}%</td>
+              <td>${r.pctVenta}%</td>
+              <td>${r.ventasCount}</td>
+              <td>${fmtMoney(r.ticketProm)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      </div>
+    `;
+    if(analysisWrap){
+      analysisWrap.innerHTML = '<div class="empty-col" style="text-align:left;padding:16px 4px;">Espacio reservado para tus notas o análisis del periodo. (Más adelante aquí se puede agregar un resumen automático de áreas de oportunidad.)</div>';
+    }
+  }catch(e){
+    console.error(e);
+    wrap.innerHTML = '<div class="empty-col" style="padding:40px;">No se pudo cargar el equipo. Revisa que hayas pegado las Reglas de Firestore y que tu usuario esté marcado como administrador ahí.</div>';
+  }
+}
+</script>
+</body>
+</html>
