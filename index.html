@@ -361,7 +361,7 @@ label.btn{cursor:pointer;}
           <p>Prospecto → Contacto → Cita → Demo realizada → Venta</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <label class="btn btn-ghost" for="surveyPhotoInput">
+          <label class="btn btn-ghost" for="surveyPhotoInput" style="display:none;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h3l2-2h6l2 2h3v13H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
             Subir foto de encuesta
           </label>
@@ -449,7 +449,7 @@ label.btn{cursor:pointer;}
         <div id="weekCompareChart" style="margin-top:10px;"></div>
       </div>
 
-      <div class="cal-card" style="margin-top:18px;">
+      <div class="cal-card" id="reportAiCard" style="margin-top:18px; display:none;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
           <div>
             <h3 style="margin:0 0 4px;font-size:16px;">Análisis del gerente de ventas</h3>
@@ -469,7 +469,7 @@ label.btn{cursor:pointer;}
           <p>Candidatos interesados en unirse al equipo</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-ghost" onclick="openImportIndeed()">
+          <button class="btn btn-ghost" onclick="openImportIndeed()" style="display:none;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
             Importar de Indeed
           </button>
@@ -2146,8 +2146,11 @@ function shiftReportWeek(n){ reportWeekOffset += n; renderReportView(); maybeAut
 
 /* Genera el análisis de IA solo si esa semana todavía no tiene uno guardado y hay
    algo de actividad que analizar — así el reporte "aparece solo" cada semana sin
-   que tengas que acordarte de darle clic, pero sin gastar llamadas de más. */
+   que tengas que acordarte de darle clic, pero sin gastar llamadas de más.
+   DESACTIVADO por ahora (a petición tuya, para no gastar créditos de IA) —
+   para reactivarlo, quita el "return;" de la primera línea de esta función. */
 function maybeAutoGenerateReport(){
+  return;
   const cur = getWeekRange(reportWeekOffset);
   if(DATA.reports[cur.start]) return; // ya existe, no lo regeneramos solo
   const hasActivity = DATA.events.some(e=> e.date>=cur.start && e.date<=cur.end)
@@ -2640,6 +2643,8 @@ async function startApp(){
   document.getElementById('app').style.display='flex';
   const navEquipo = document.getElementById('navEquipo');
   if(navEquipo) navEquipo.style.display = isAdmin() ? '' : 'none';
+  const reportAiCard = document.getElementById('reportAiCard');
+  if(reportAiCard) reportAiCard.style.display = isAdmin() ? '' : 'none';
   renderAll();
 }
 
