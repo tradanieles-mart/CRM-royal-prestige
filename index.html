@@ -1439,7 +1439,7 @@ Genera solo el mensaje final, sin explicaciones ni comillas.`;
   }
 
   try{
-    const text = await callAI(prompt, {maxTokens: 700});
+    const text = await callAI(prompt, {maxTokens: 2000});
     const message = text ? text.replace(/^"|"$/g,'') : '';
     const ta = document.getElementById('waText');
     const status = document.getElementById('waStatus');
@@ -1809,7 +1809,7 @@ async function extractIndeedText(){
   const btn = document.getElementById('indeedExtractBtn');
   btn.disabled = true; btn.textContent = 'Leyendo…';
   try{
-    const text = await callAI(`Este es un texto copiado de un perfil o mensaje de un candidato en Indeed, para reclutamiento de un equipo de venta directa de Royal Prestige:\n\n"""${raw}"""\n\nExtrae: nombre completo, teléfono (si aparece), y un resumen breve como nota (experiencia relevante o por qué podría interesar). Responde ÚNICAMENTE con JSON válido, sin texto extra ni markdown, en este formato exacto: {"nombre":"","telefono":"","notas":""}. Si un dato no aparece, deja el valor como cadena vacía "".`, {maxTokens: 800, json: true});
+    const text = await callAI(`Este es un texto copiado de un perfil o mensaje de un candidato en Indeed, para reclutamiento de un equipo de venta directa de Royal Prestige:\n\n"""${raw}"""\n\nExtrae: nombre completo, teléfono (si aparece), y un resumen breve como nota (experiencia relevante o por qué podría interesar). Responde ÚNICAMENTE con JSON válido, sin texto extra ni markdown, en este formato exacto: {"nombre":"","telefono":"","notas":""}. Si un dato no aparece, deja el valor como cadena vacía "".`, {maxTokens: 2000, json: true});
     if(!text){ toast('No se pudo leer el texto, intenta de nuevo'); btn.disabled=false; btn.textContent='Extraer datos'; return; }
     const cleaned = text.replace(/```json|```/g,'').trim();
     const extracted = JSON.parse(cleaned);
@@ -2331,7 +2331,7 @@ RECOMENDACIONES — 3 a 4 acciones concretas y directas para la próxima semana,
 Sé concreto, usa los números reales que te di, y no inventes datos que no están en el JSON.`;
 
   try{
-    const text = await callAI(prompt, {maxTokens: 1000});
+    const text = await callAI(prompt, {maxTokens: 3000});
     box.classList.remove('loading');
     box.textContent = text || 'No se pudo generar el análisis, intenta de nuevo.';
     if(text){
@@ -2362,7 +2362,7 @@ function handleSurveyPhoto(event){
     try{
       const text = await callAI(
         "Esta es una foto de una encuesta/formulario de prospección en papel, llenado a mano en un módulo de venta directa de Royal Prestige (cocinas y utensilios de cocina). Extrae: nombre completo del prospecto, teléfono/celular, dirección (calle y número si aparece), colonia/zona, dónde lo conoció (ej. nombre de la tienda o módulo), si le gusta cocinar (si/no, según lo marcado), si le interesa cuidar su salud (si/no), antecedentes familiares de enfermedad marcados (cáncer, diabetes, hipertensión — puede haber varios o ninguno), para cuántas personas cocina, con qué utensilios cocina actualmente, y cualquier nota relevante adicional (comentarios, si un familiar ya tiene el producto, etc.). Responde ÚNICAMENTE con un JSON válido, sin texto extra, sin markdown, en este formato exacto: {\"nombre\":\"\",\"telefono\":\"\",\"direccion\":\"\",\"colonia\":\"\",\"donde_conocio\":\"\",\"le_gusta_cocinar\":\"\",\"le_interesa_salud\":\"\",\"antecedentes\":[],\"num_personas\":\"\",\"utensilios\":\"\",\"notas\":\"\"}. Para le_gusta_cocinar y le_interesa_salud usa exactamente \"si\", \"no\" o \"\" (si no está marcado/no aparece). Para antecedentes usa un arreglo con los valores exactos \"cancer\", \"diabetes\", \"hipertension\" según lo que esté marcado (arreglo vacío si no hay nada marcado). Si algún otro dato no aparece legible en la imagen, deja el valor como cadena vacía \"\".",
-        {maxTokens: 1200, image: {mediaType, base64}, json: true}
+        {maxTokens: 3000, image: {mediaType, base64}, json: true}
       );
       if(!text){ toast('No se pudo leer la foto, intenta de nuevo'); return; }
       const cleaned = text.replace(/```json|```/g,'').trim();
