@@ -73,7 +73,7 @@ label.btn{cursor:pointer;}
 .btn-rose:hover{background:var(--rose-soft);}
 
 /* ---------- pipeline ---------- */
-.board{display:grid;grid-template-columns:repeat(6,minmax(220px,1fr));gap:16px;overflow-x:auto;padding-bottom:10px;}
+.board{display:grid;grid-template-columns:repeat(7,minmax(220px,1fr));gap:16px;overflow-x:auto;padding-bottom:10px;}
 .col{background:rgba(255,253,249,0.5);border:1px solid var(--line);border-radius:14px;padding:14px;min-height:200px;display:flex;flex-direction:column;gap:10px;}
 .col-head{display:flex;align-items:center;gap:8px;padding:2px 4px 10px;border-bottom:1px dashed var(--line);margin-bottom:2px;}
 .col-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);}
@@ -242,7 +242,7 @@ label.btn{cursor:pointer;}
   .topbar h2{font-size:21px;}
   .topbar > div:last-child{display:flex;flex-direction:column;}
   .topbar .btn{width:100%;justify-content:center;}
-  .board{grid-template-columns:repeat(6,82vw);gap:12px;scroll-snap-type:x mandatory;padding-bottom:6px;}
+  .board{grid-template-columns:repeat(7,82vw);gap:12px;scroll-snap-type:x mandatory;padding-bottom:6px;}
   .col{scroll-snap-align:start;}
   .cal-wrap{grid-template-columns:1fr;}
   .cal-day{font-size:13px;}
@@ -257,7 +257,7 @@ label.btn{cursor:pointer;}
   input, select, textarea{font-size:16px !important;} /* evita zoom automático en iOS */
 }
 @media (max-width: 480px){
-  .board{grid-template-columns:repeat(6,88vw);}
+  .board{grid-template-columns:repeat(7,88vw);}
   .compare-row{grid-template-columns:1fr;}
   .bar-row{grid-template-columns:90px 1fr 30px;}
   .report-grid{grid-template-columns:1fr 1fr;}
@@ -555,7 +555,10 @@ if(FIREBASE_READY){
 const STAGES = ["prospecto","contacto","cita","demo","venta"];
 const STAGE_LABEL = {prospecto:"Prospecto",contacto:"Contacto",cita:"Cita",demo:"Demo realizada",venta:"Venta"};
 
-// Actividades relativas al día de la venta (curado del producto, primeros contactos)
+// Actividades relativas al día de la venta (curado del producto, primeros contactos).
+// El plan arranca 15 días después de la venta (antes empezaba al día siguiente) — se
+// suma ONBOARDING_START_DELAY a cada "offset" de la lista de abajo.
+const ONBOARDING_START_DELAY = 14;
 const ONBOARDING_TEMPLATE = [
   {offset:1,  title:"Curado del producto", desc:"Se realiza el curado del producto (información de pagos) y cocinar con el cliente."},
   {offset:7,  title:"Llamada de seguimiento de uso", desc:"Llamar para saber cómo les va funcionando el producto."},
@@ -763,7 +766,7 @@ function generatePlan(saleDateStr){
   const plan = [];
   let uid = 1;
   ONBOARDING_TEMPLATE.forEach(t=>{
-    plan.push({id:'a'+(uid++), date: addDays(saleDateStr, t.offset), title:t.title, desc:t.desc, done:false});
+    plan.push({id:'a'+(uid++), date: addDays(saleDateStr, t.offset + ONBOARDING_START_DELAY), title:t.title, desc:t.desc, done:false});
   });
   ANNUAL_TEMPLATE.forEach(t=>{
     plan.push({id:'a'+(uid++), date: nextOccurrence(saleDateStr, t.month, t.day), title:t.title, desc:t.desc, done:false});
@@ -937,6 +940,7 @@ const BOARD_COLUMNS = [
   {key:'cita', label:'Cita'},
   {key:'demo', label:'Demo realizada'},
   {key:'venta', label:'Venta'},
+  {key:'no_realizada', label:'Citas no realizadas'},
   {key:'descartados', label:'Descartados'},
 ];
 
@@ -960,7 +964,6 @@ function renderBoard(){
       items = DATA.prospects.filter(p=>
         (p.stage==='no_interesado' && !isStaleNoInteresado(p))
         || p.stage==='no_venta'
-        || p.stage==='no_realizada'
       );
     } else {
       items = DATA.prospects.filter(p=>p.stage===col.key);
@@ -1026,7 +1029,7 @@ function renderCard(p, colKey){
   }
   let metaLine = 'Prospectado '+fmtShort(p.prospectDate || p.history[0].date);
   let tagHtml = '<span class="tag '+(p.clientType==='cliente'?'tag-blue':'tag-neutral')+'">'+(p.clientType==='cliente'?'Cliente existente':'No cliente')+'</span>';
-  if(colKey==='descartados'){
+  if(colKey==='descartados' || colKey==='no_realizada'){
     if(p.stage==='no_interesado') tagHtml += ' <span class="tag tag-rose">No interesado</span>';
     else if(p.stage==='no_realizada') tagHtml += ' <span class="tag tag-rose">Cita no realizada'+(p.noShowReason?': '+escapeHtml(p.noShowReason):'')+'</span>';
     else tagHtml += ' <span class="tag tag-rose">No venta'+(p.saleReason?': '+escapeHtml(p.saleReason):'')+'</span>';
@@ -1066,6 +1069,10 @@ function renderCard(p, colKey){
     tag.className='tag tag-sage';
     tag.textContent = 'Cliente — vendió '+fmtShort(p.saleDate);
     actions.appendChild(tag);
+    actions.appendChild(makeBtn('◀','btn-ghost',()=>revertStage(p.id,'demo'),'Regresar a Demo realizada (por si fue un error)'));
+  } else if(p.stage==='no_realizada'){
+    actions.appendChild(makeBtn('💬 Reactivar por mensaje','btn-ghost',()=>openWaModal(p.id,'seguimiento')));
+    actions.appendChild(makeBtn('Reactivar','btn-sage',()=>revertStage(p.id,'contacto'),'Regresar a Contacto para volver a agendar'));
   } else {
     actions.appendChild(makeBtn('Reactivar','btn-ghost',()=>moveStage(p.id,'prospecto')));
   }
